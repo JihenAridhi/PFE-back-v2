@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM ;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
-#[ApiResource]
+//#[ApiResource]
 
-class Article
+class Article extends ArticleRepository
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

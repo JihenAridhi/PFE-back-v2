@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM ;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass : FeedbackRepository::class)]
-#[ApiResource]
-class Feedback
+//#[ApiResource]
+class Feedback extends FeedbackRepository
 {
 
     #[ORM\Id]

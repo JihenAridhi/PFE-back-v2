@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping as ORM ;
 
 
 #[ORM\Entity(repositoryClass : NewsRepository::class)]
-#[ApiResource]
-class News
+//#[ApiResource]
+class News extends NewsRepository
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

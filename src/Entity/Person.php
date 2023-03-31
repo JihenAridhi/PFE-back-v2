@@ -3,14 +3,20 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass : PersonRepository::class)]
-#[ApiResource]
-class Person
+/*#[ApiResource(
+    operations: [
+        new Get(uriTemplate: '/people/{email}', uriVariables: 'email')
+    ]
+)
+]*/
+class Person extends PersonRepository
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,7 +29,7 @@ class Person
     #[ORM\Column(length: 255)]
     private ?string $lastName;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email;
 
     #[ORM\Column(length: 255)]
@@ -50,6 +56,8 @@ class Person
     #[ORM\ManyToMany(targetEntity: Autorisation::class, mappedBy: 'person')]
     private Collection $autorisations;
 
+    public function Person()
+    {}
 
     public function __construct(?string $firstName, ?string $lastName, ?string $email, ?string $password)
     {

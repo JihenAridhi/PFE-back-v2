@@ -8,8 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM ;
 
 #[ORM\Entity(repositoryClass : AutorisationRepository::class)]
-#[ApiResource]
-class Autorisation
+/*#[ApiResource]*/
+class Autorisation extends AutorisationRepository
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,10 +26,10 @@ class Autorisation
      * @param string|null $autorisation
      * @param Collection $person
      */
-    public function __construct(?string $autorisation, Collection $person)
+    public function __construct(?string $autorisation/*, Collection $person*/)
     {
         $this->autorisation = $autorisation;
-        $this->person = $person;
+        //$this->person = $person;
     }
 
     public function __construct1($person = null)
