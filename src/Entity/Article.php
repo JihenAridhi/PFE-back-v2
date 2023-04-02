@@ -2,17 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use DateTime;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM ;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
-//#[ApiResource]
-
-class Article extends ArticleRepository
+class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -169,6 +167,23 @@ class Article extends ArticleRepository
     public function setEditor(?string $editor): void
     {
         $this->editor = $editor;
+    }
+
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
+    /**
+     * @param Collection $authors
+     */
+    public function setAuthors(Collection $authors): void
+    {
+        $this->authors = $authors;
     }
 
 

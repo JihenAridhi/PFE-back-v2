@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\AutorisationRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM ;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : AutorisationRepository::class)]
-/*#[ApiResource]*/
 class Autorisation extends AutorisationRepository
 {
     #[ORM\Id]
@@ -20,7 +19,7 @@ class Autorisation extends AutorisationRepository
     private ?string $autorisation;
 
     #[ORM\ManyToMany(targetEntity: Person::class, inversedBy: 'autorisations')]
-    private int $person;
+    private Collection $person;
 
     /**
      * @param string|null $autorisation
@@ -32,32 +31,54 @@ class Autorisation extends AutorisationRepository
         //$this->person = $person;
     }
 
-    public function __construct1($person = null)
-    {
-        $this->person = $person;
-    }
-
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId (int $id) :self
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
-    public function getAutorisation (): ?int
+    /**
+     * @return string|null
+     */
+    public function getAutorisation(): ?string
     {
         return $this->autorisation;
     }
-    public function setAutorisation (string $autorisation): self
+
+    /**
+     * @param string|null $autorisation
+     */
+    public function setAutorisation(?string $autorisation): void
     {
-        $this->autorisation=$autorisation;
-        return $this;
+        $this->autorisation = $autorisation;
     }
 
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getPerson(): Collection
+    {
+        return $this->person;
+    }
+
+    /**
+     * @param Collection $person
+     */
+    public function setPerson(Collection $person): void
+    {
+        $this->person = $person;
+    }
 
 
 }

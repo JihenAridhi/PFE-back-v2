@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Autorisation;
 use App\Entity\Person;
 use App\Repository\PersonRepository;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,15 +85,35 @@ class PersonController extends AbstractController
         $this->objectManager->flush();
         return $this->json('success!!');
     }
-/*
-    #[Route('/person/{id}/autorisations')]
-    public function getAutorisations(int $id, EntityManager $entityManager): Response
-    {
-        $query = $entityManager->createQuery
-        ('select autorisation from autorisation A, autorisation_person AP where person_id = :id and A.id = AP.autorisation_id')
-            ->setParameter('id', $id);
 
-        return $this->json($query->getResult());
-    }*/
+    #[Route('/person/{id}/getAutorisations')]
+    public function getPersonAutorisations($id)
+    {
+        $query = $this->repo->createQueryBuilder('p')
+            ->select('a.autorisation')
+            ->leftjoin('p.autorisations', 'a')
+            ->andWhere('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+        return $this->json($query);
+    }
+
+   #[Route('/person/{idP}/addAutorisation/{idA}')]
+    public function addAurorisations(int $idP, int $idA)
+   {
+        $person = $this->repo->find($idP);
+        $autorisation = $this->managerRegistry->getRepository(Autorisation::class)->find($idA);
+
+        $person->getAutorisations()->add($autorisation);
+        $autorisation->getPerson()->add($person);
+
+        $this->objectManager->persist($person);
+        $this->objectManager->persist($autorisation);
+
+        $this->objectManager->flush();
+
+        return $this->json('sucess!!');
+   }
 
 }

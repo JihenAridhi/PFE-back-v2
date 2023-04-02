@@ -2,22 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : PersonRepository::class)]
-/*#[ApiResource(
-    operations: [
-        new Get(uriTemplate: '/people/{email}', uriVariables: 'email')
-    ]
-)
-]*/
-class Person extends PersonRepository
+class Person //extends PersonRepository
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -199,6 +193,73 @@ class Person extends PersonRepository
     {
         $this->interest = $interest;
     }
+
+    /**
+     * @return null
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param null $photo
+     */
+    public function setPhoto($photo): void
+    {
+        $this->photo = $photo;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param bool|null $status
+     */
+    public function setStatus(?bool $status): void
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getArticle(): Collection
+    {
+        return $this->article;
+    }
+
+    /**
+     * @param Collection $article
+     */
+    public function setArticle(Collection $article): void
+    {
+        $this->article = $article;
+    }
+
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getAutorisations(): Collection
+    {
+        return $this->autorisations;
+    }
+
+    /**
+     * @param Collection $autorisations
+     */
+    public function setAutorisations(Collection $autorisations): void
+    {
+        $this->autorisations = $autorisations;
+    }
+
 
 
 }
