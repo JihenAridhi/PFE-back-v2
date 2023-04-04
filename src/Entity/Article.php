@@ -7,7 +7,6 @@ use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM ;
 use Doctrine\DBAL\Types\Types;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
 class Article
@@ -171,7 +170,6 @@ class Article
 
     /**
      * @return Collection
-     * @Ignore
      */
     public function getAuthors(): Collection
     {

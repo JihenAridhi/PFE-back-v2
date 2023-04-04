@@ -25,14 +25,6 @@ class PersonController extends AbstractController
         $this->objectManager = $this->managerRegistry->getManager();
     }
 
-    /*#[Route('/person', name: 'app_person')]
-    public function index(): Response
-    {
-        return $this->render('person/index.html.twig', [
-            'controller_name' => 'PersonController',
-        ]);
-    }*/
-
     #[Route('/person/getAll')]
     public function getAll(): Response
     {return $this->json($this->repo->findAll());}
@@ -58,12 +50,14 @@ class PersonController extends AbstractController
         return$this->json($person);
     }
 
-    #[Route('/person/update/{id}')]
-    public function update(int $id, Request $request): Response
+    #[Route('/person/update')]
+    public function update(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = $this->repo->find($id);
+        dump($data['interest']);
+
+        $person = $this->repo->find($data['id']);
         $person->setFirstName($data['firstName']);
         $person->setLastName($data['lastName']);
         $person->setEmail($data['email']);
@@ -71,6 +65,7 @@ class PersonController extends AbstractController
         $person->setProfession($data['profession']);
         $person->setTeam($data['team']);
         $person->setInterest($data['interest']);
+        $person->setStatus(true);
 
         $this->objectManager->persist($person);
         $this->objectManager->flush();

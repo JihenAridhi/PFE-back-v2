@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Entity;
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\NewsRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM ;
 
 
 
 #[ORM\Entity(repositoryClass : NewsRepository::class)]
-//#[ApiResource]
-class News extends NewsRepository
+class News
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,10 +17,10 @@ class News extends NewsRepository
     private ?int $id ;
 
     #[ORM\Column(length: 255)]
-    private ?string $name ;
+    private ?string $title ;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $date ;
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTime $date ;
 
     #[ORM\Column(length: 255)]
     private ?string $description ;
@@ -30,13 +29,13 @@ class News extends NewsRepository
     private $photo = null;
 
     /**
-     * @param string|null $name
-     * @param \DateTime|null $date
+     * @param string|null $title
+     * @param DateTime|null $date
      * @param string|null $description
      */
-    public function __construct(?string $name, ?\DateTime $date, ?string $description)
+    public function __construct(?string $title, ?DateTime $date, ?string $description)
     {
-        $this->name = $name;
+        $this->title = $title;
         $this->date = $date;
         $this->description = $description;
     }
@@ -51,28 +50,36 @@ class News extends NewsRepository
         $this->id = $id;
         return $this;
     }
-    public function getName(): ?string
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
     {
-        return $this->name;
-    }
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-        return $this;
+        return $this->title;
     }
 
     /**
-     * @return \DateTime|null
+     * @param string|null $title
      */
-    public function getDate(): ?\DateTime
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
+    }
+
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
     /**
-     * @param \DateTime|null $date
+     * @param DateTime|null $date
      */
-    public function setDate(?\DateTime $date): void
+    public function setDate(?DateTime $date): void
     {
         $this->date = $date;
     }

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : PersonRepository::class)]
-class Person //extends PersonRepository
+class Person
 {
 
     #[ORM\Id]
@@ -49,9 +49,6 @@ class Person //extends PersonRepository
 
     #[ORM\ManyToMany(targetEntity: Autorisation::class, mappedBy: 'person')]
     private Collection $autorisations;
-
-    public function Person()
-    {}
 
     public function __construct(?string $firstName, ?string $lastName, ?string $email, ?string $password)
     {
