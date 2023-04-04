@@ -33,11 +33,12 @@ class News
      * @param DateTime|null $date
      * @param string|null $description
      */
-    public function __construct(?string $title, ?DateTime $date, ?string $description)
+    public function __construct(?string $title, ?DateTime $date, ?string $description, $photo)
     {
         $this->title = $title;
         $this->date = $date;
         $this->description = $description;
+        $this->photo = $photo;
     }
 
 
@@ -60,15 +61,6 @@ class News
     }
 
     /**
-     * @param string|null $title
-     */
-    public function setTitle(?string $title): void
-    {
-        $this->title = $title;
-    }
-
-
-    /**
      * @return DateTime|null
      */
     public function getDate(): ?DateTime
@@ -84,6 +76,16 @@ class News
         $this->date = $date;
     }
 
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
+    }
+
+
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -93,5 +95,23 @@ class News
         $this->description = $description;
         return $this;
     }
+
+    /**
+     * @return null
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param null $photo
+     */
+    public function setPhoto($photo): void
+    {
+        $this->photo = $photo;
+    }
+
+
 
 }

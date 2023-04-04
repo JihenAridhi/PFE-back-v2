@@ -31,14 +31,21 @@ class NewsController extends AbstractController
 
     #[Route('/news/get/{id}')]
     public function get(int $id): Response
-    {return $this->json($this->repo->find($id));}
+    {
+        $news = $this->repo->find($id);
+        return $this->json($news);
+    }
 
     #[Route('/news/add')]
     public function add(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $news = new News($data['title'], DateTime::createFromFormat('d-m-Y', $data['date']), $data['description']);
+        /*$photo = $data['photo'];
+        $filename = uniqid() . '.' . $photo['extension'];
+        file_put_contents('uploads/' . $filename, base64_decode($photo['value']));*/
+
+        $news = new News($data['title'], DateTime::createFromFormat('d-m-Y', $data['date']), $data['description'], $data['photo']);//$filename);
 
         $this->objectManager->persist($news);
         $this->objectManager->flush();
@@ -56,6 +63,7 @@ class NewsController extends AbstractController
         $news->setTitle($data['title']);
         $news->setDate(DateTime::createFromFormat('dd-mm-yyyy', $data['date']));
         $news->setDescription($data['description']);
+        $news->setPhoto($data['photo']);
 
         $this->objectManager->persist($news);
         $this->objectManager->flush();
