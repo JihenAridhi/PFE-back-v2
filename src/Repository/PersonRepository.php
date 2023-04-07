@@ -55,16 +55,6 @@ class PersonRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function findOneByEmail($value): ?Person
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.email = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-       ;
-    }
-
 
 
 }

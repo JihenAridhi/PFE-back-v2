@@ -11,7 +11,6 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method News|null find($id, $lockMode = null, $lockVersion = null)
  * @method News|null findOneBy(array $criteria, array $orderBy = null)
- * @method News[]    findAll()
  * @method News[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class NewsRepository extends ServiceEntityRepository
@@ -38,6 +37,9 @@ class NewsRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findAll()
+    {return $this->findBy(array(), array('id' => 'DESC'));}
 
 //    /**
 //     * @return News[] Returns an array of News objects

@@ -33,10 +33,10 @@ class News
      * @param DateTime|null $date
      * @param string|null $description
      */
-    public function __construct(?string $title, ?DateTime $date, ?string $description, $photo)
+    public function __construct(?string $title, ?string $date, ?string $description, $photo)
     {
         $this->title = $title;
-        $this->date = $date;
+        $this->date = DateTime::createFromFormat('d-m-Y H:i:s', $date);
         $this->description = $description;
         $this->photo = $photo;
     }

@@ -29,13 +29,21 @@ class PersonController extends AbstractController
     public function getAll(): Response
     {return $this->json($this->repo->findAll());}
 
+    #[Route('/person/getAll/profession/{profession}')]
+    public function getAllByProfession(string $profession): Response
+    {return $this->json($this->repo->findBy(['profession' => $profession]));}
+
+    #[Route('/person/getAll/status/{status}')]
+    public function getAllByStatus(bool $status): Response
+    {return $this->json($this->repo->findBy(['status'=>$status]));}
+
     #[Route('/person/get/{id}')]
     public function get(int $id): Response
     {return $this->json($this->repo->find($id));}
 
     #[Route('/person/getByEmail/{email}')]
     public function getByEmail(string $email): Response
-    {return $this->json($this->repo->findOneByEmail($email));}
+    {return $this->json($this->repo->findOneBy(['email'=>$email]));}
 
     #[Route('/person/add')]
     public function add(Request $request): Response
@@ -85,7 +93,7 @@ class PersonController extends AbstractController
     public function getPersonAutorisations($id)
     {
         $query = $this->repo->createQueryBuilder('p')
-            ->select('a.autorisation')
+            ->select('a.id, a.autorisation')
             ->leftjoin('p.autorisations', 'a')
             ->andWhere('p.id = :id')
             ->setParameter('id', $id)

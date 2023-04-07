@@ -45,7 +45,8 @@ class NewsController extends AbstractController
         $filename = uniqid() . '.' . $photo['extension'];
         file_put_contents('uploads/' . $filename, base64_decode($photo['value']));*/
 
-        $news = new News($data['title'], DateTime::createFromFormat('d-m-Y', $data['date']), $data['description'], $data['photo']);//$filename);
+
+        $news = new News($data['title'], $data['date'], $data['description'], null);//$data['photo']);//$filename);
 
         $this->objectManager->persist($news);
         $this->objectManager->flush();
@@ -61,9 +62,9 @@ class NewsController extends AbstractController
         $news = $this->repo->find($data['id']);
 
         $news->setTitle($data['title']);
-        $news->setDate(DateTime::createFromFormat('dd-mm-yyyy', $data['date']));
+        $news->setDate(DateTime::createFromFormat('d-m-Y H:i:s', $data['date']));
         $news->setDescription($data['description']);
-        $news->setPhoto($data['photo']);
+        //$news->setPhoto($data['photo']);
 
         $this->objectManager->persist($news);
         $this->objectManager->flush();
@@ -75,6 +76,7 @@ class NewsController extends AbstractController
     public function delete(int $id): Response
     {
         $this->repo->remove($this->repo->find($id));
+        $this->objectManager->flush();
         return $this->json('success !!');
     }
 }
