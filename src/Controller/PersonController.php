@@ -81,6 +81,16 @@ class PersonController extends AbstractController
         return$this->json($person);
     }
 
+    #[Route('/person/accept/{id}')]
+    public function accept(int $id): Response
+    {
+        $person = $this->repo->find($id);
+        $person->setStatus(true);
+        $this->objectManager->persist($person);
+        $this->objectManager->flush();
+        return $this->json($person);
+    }
+
     #[Route('/person/delete/{id}')]
     public function delete(int $id): Response
     {
