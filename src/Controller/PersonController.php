@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Autorisation;
 use App\Entity\Person;
 use App\Repository\PersonRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -99,34 +99,26 @@ class PersonController extends AbstractController
         return $this->json('success!!');
     }
 
-    #[Route('/person/{id}/getAutorisations')]
-    public function getPersonAutorisations($id)
+    #[Route('photo/user')]
+    public function upload(Request $request): Response
     {
-        $query = $this->repo->createQueryBuilder('p')
-            ->select('a.id, a.autorisation')
-            ->leftjoin('p.autorisations', 'a')
-            ->andWhere('p.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getResult();
-        return $this->json($query);
+        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $file = $request->files->get('file');
+        $fileName = $file->getClientOriginalName();
+
+        try {$file->move($server.'assets\userPhoto\\', $fileName);}
+        catch (FileException $e) {}
+
+        return $this->json('C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\assets\userPhoto\\'.$fileName);
     }
 
-   #[Route('/person/{idP}/addAutorisation/{idA}')]
-    public function addAurorisations(int $idP, int $idA)
-   {
-        $person = $this->repo->find($idP);
-        $autorisation = $this->managerRegistry->getRepository(Autorisation::class)->find($idA);
-
-        $person->getAutorisations()->add($autorisation);
-        $autorisation->getPerson()->add($person);
-
-        $this->objectManager->persist($person);
-        $this->objectManager->persist($autorisation);
-
-        $this->objectManager->flush();
-
-        return $this->json('sucess!!');
-   }
-
+    #[Route('photo/user/get/{id}')]
+    public function getPhoto(int $id)
+    {
+        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $path = $server."assets\userPhoto\\";
+        if (file_exists($path.$id.'.jpg'))
+            return $this->json($id.'.jpg');
+        return $this->json('user.jpg');
+    }
 }

@@ -43,10 +43,10 @@ class Event extends EventRepository
      * @param string|null $description
      */
 
-    public function __construct(?string $title, ?DateTime $date, ?string $location, ?string $organiser, ?string $description)
+    public function __construct(?string $title, ?string $date, ?string $location, ?string $organiser, ?string $description)
     {
         $this->title = $title;
-        $this->date = $date;
+        $this->date = new DateTime($date);
         $this->location = $location;
         $this->organiser = $organiser;
         $this->description = $description;

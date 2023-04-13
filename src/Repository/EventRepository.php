@@ -11,7 +11,6 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
  * @method Event|null findOneBy(array $criteria, array $orderBy = null)
- * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class EventRepository extends ServiceEntityRepository
@@ -38,6 +37,9 @@ class EventRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findAll()
+    {return $this->findBy(array(), array('id' => 'DESC'));}
 
 //    /**
 //     * @return Event[] Returns an array of Event objects

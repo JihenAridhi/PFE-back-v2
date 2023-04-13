@@ -45,11 +45,11 @@ class Article
      * @param int|null $lastPage
      * @param string|null $editor
      */
-    public function __construct(?string $title, ?string $type, ?DateTime $date, ?int $firstPage, ?int $lastPage, ?string $editor)
+    public function __construct(?string $title, ?string $type, ?string $date, ?int $firstPage, ?int $lastPage, ?string $editor)
     {
         $this->title = $title;
         $this->type = $type;
-        $this->date = $date;
+        $this->date = DateTime::createFromFormat('d-m-Y H:i:s', $date);
         $this->firstPage = $firstPage;
         $this->lastPage = $lastPage;
         $this->editor = $editor;

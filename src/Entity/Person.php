@@ -29,9 +29,6 @@ class Person
     #[ORM\Column(length: 255)]
     private ?string $password;
 
-    #[ORM\Column(type: Types::BLOB , nullable: true)]
-    private $photo = null;
-
     #[ORM\Column(length: 255 , nullable: true)]
     private ?string $profession;
 
