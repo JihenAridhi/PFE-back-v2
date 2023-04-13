@@ -96,6 +96,6 @@ class NewsController extends AbstractController
         $path = $server."assets\\newsPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return $this->json($id.'.jpg');
-        return $this->json('user.jpg');
+        return $this->json('default.jpg');
     }
 }

@@ -91,6 +91,6 @@ class EventController extends AbstractController
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return $this->json($id.'.jpg');
-        return $this->json('user.jpg');
+        return $this->json('default.jpg');
     }
 }
