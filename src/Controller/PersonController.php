@@ -118,7 +118,7 @@ class PersonController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\userPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json($id.'.jpg');
-        return $this->json('default.jpg');
+            return $this->json("assets\userPhoto\\".$id.'.jpg');
+        return $this->json('assets\userPhoto\\default.jpg');
     }
 }

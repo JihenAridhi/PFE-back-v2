@@ -25,9 +25,6 @@ class News
     #[ORM\Column(length: 255)]
     private ?string $description ;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $photo = null;
-
     /**
      * @param string|null $title
      * @param DateTime|null $date
@@ -93,22 +90,6 @@ class News
     {
         $this->description = $description;
         return $this;
-    }
-
-    /**
-     * @return null
-     */
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
-
-    /**
-     * @param null $photo
-     */
-    public function setPhoto($photo): void
-    {
-        $this->photo = $photo;
     }
 
 

@@ -67,7 +67,7 @@ class EventController extends AbstractController
     #[Route('/event/delete/{id}')]
     public function delete(int $id): Response
     {
-        $this->repo->remove($id);
+        $this->repo->remove($this->repo->find($id));
         return $this->json('success !!');
     }
 
@@ -90,7 +90,7 @@ class EventController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json($id.'.jpg');
-        return $this->json('default.jpg');
+            return $this->json("assets\\eventPhoto\\".$id.'.jpg');
+        return $this->json("assets\\eventPhoto\\".'default.jpg');
     }
 }

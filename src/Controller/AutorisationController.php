@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function Webmozart\Assert\Tests\StaticAnalysis\length;
 
 class AutorisationController extends AbstractController
 {
@@ -41,24 +42,25 @@ class AutorisationController extends AbstractController
     #[Route('/autorisation/getAll')]
     public function getAll(): Response
     {
-        $users = $this->repo->createQueryBuilder('a')
-            ->select('a.id as idA, p.id as idP')
-            ->leftjoin('a.person', 'p')
-            ->andWhere('p.id is not null')
+        $users = $this->managerRegistry->getRepository(Person::class)->createQueryBuilder('p')
+            ->select('p.id as idP, a.id as idA')
+            ->leftjoin('p.autorisations', 'a')
+            ->andWhere('p.status=true')
             ->orderBy('p.id')
             ->getQuery()
             ->getResult();
-        $query = array();
-        $counter = -1;
-        foreach ($users as $row) {
-            if ($row['idA'] == 1)
-                $counter++;
-            $query[$counter][] = $row['idA'];
-        }
 
+        $query = array();
+        foreach ($users as $row) {
+            if (!$row['idA'])
+                $query[$row['idP']] = [];
+            else
+            $query[$row['idP']][] = $row['idA'];
+        }
+        //$query = array_map(function ($row) {return array_values($row);}, $query);
+        $query = array_values($query);
         return $this->json($query);
     }
-    //{return $this->json($this->repo->findAll());}
 
     #[Route('/autorisation/get/{id}')]
     public function get(int $id): Response

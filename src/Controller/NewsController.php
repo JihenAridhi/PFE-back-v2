@@ -95,7 +95,7 @@ class NewsController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\\newsPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json($id.'.jpg');
-        return $this->json('default.jpg');
+            return $this->json("assets\\newsPhoto\\".$id.'.jpg');
+        return $this->json("assets\\newsPhoto\\".'default.jpg');
     }
 }

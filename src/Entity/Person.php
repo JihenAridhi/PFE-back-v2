@@ -189,22 +189,6 @@ class Person
     }
 
     /**
-     * @return null
-     */
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
-
-    /**
-     * @param null $photo
-     */
-    public function setPhoto($photo): void
-    {
-        $this->photo = $photo;
-    }
-
-    /**
      * @return bool|null
      */
     public function getStatus(): ?bool

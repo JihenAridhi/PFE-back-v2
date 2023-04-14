@@ -29,9 +29,6 @@ class Event extends EventRepository
     #[ORM\Column(length: 255)]
     private ?string $organiser;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $photo = null;
-
     #[ORM\Column(length: 255)]
     private ?string $description ;
 
