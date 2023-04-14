@@ -68,6 +68,7 @@ class EventController extends AbstractController
     public function delete(int $id): Response
     {
         $this->repo->remove($this->repo->find($id));
+        $this->objectManager->flush();
         return $this->json('success !!');
     }
 

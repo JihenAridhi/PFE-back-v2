@@ -36,7 +36,7 @@ class FeedbackController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $feedback = new Feedback($data['name'], $data['email'], $data['date'], $data['message'], $data['phone']);
+        $feedback = new Feedback($data['name'], $data['email'], $data['message'], $data['phone']);
         $this->objectManager->persist($feedback);
 
         $this->objectManager->flush();

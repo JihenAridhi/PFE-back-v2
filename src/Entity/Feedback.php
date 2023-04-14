@@ -20,9 +20,6 @@ class Feedback extends FeedbackRepository
     #[ORM\Column(length: 255)]
     private ?string $name ;
 
-    #[ORM\Column (type: Types::DATE_MUTABLE)]
-    private ?\DateTime $date;
-
     #[ORM\Column(length: 255)]
     private ?string $email ;
 
@@ -34,15 +31,13 @@ class Feedback extends FeedbackRepository
 
     /**
      * @param string|null $name
-     * @param \DateTime|null $date
      * @param string|null $email
      * @param string|null $message
      * @param int|null $phone
      */
-    public function __construct(?string $name, ?\DateTime $date, ?string $email, ?string $message, ?int $phone)
+    public function __construct(?string $name, ?string $email, ?string $message, ?int $phone)
     {
         $this->name = $name;
-        $this->date = $date;
         $this->email = $email;
         $this->message = $message;
         $this->phone = $phone;
@@ -67,21 +62,6 @@ class Feedback extends FeedbackRepository
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getDate(): ?\DateTime
-    {
-        return $this->date;
-    }
-
-    /**
-     * @param \DateTime|null $date
-     */
-    public function setDate(?\DateTime $date): void
-    {
-        $this->date = $date;
-    }
 
     public function getEmail(): ?string
     {
