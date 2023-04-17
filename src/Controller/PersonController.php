@@ -63,8 +63,6 @@ class PersonController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        dump($data['interest']);
-
         $person = $this->repo->find($data['id']);
         $person->setFirstName($data['firstName']);
         $person->setLastName($data['lastName']);
