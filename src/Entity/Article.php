@@ -2,16 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM ;
-use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Ignore;
-use Symfony\Component\Validator\Constraints\year;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
-#[ApiResource]
 
 class Article
 {
@@ -259,7 +255,7 @@ class Article
      * @return Collection
      * @Ignore
      */
-    public function getAuthors(): Collection
+    public function getAuthors()
     {
         return $this->authors;
     }

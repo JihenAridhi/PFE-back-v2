@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Person;
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use phpDocumentor\Reflection\DocBlock\Tags\Author;
 use PhpParser\Node\Expr\Array_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,19 +54,10 @@ class ArticleController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $article = new Article($data['title'], $data['type'], $data['journal'], $data['year'], $data['firstPage'], $data['lastPage'], $data['editor'], $data['description'], $data['url']);
-        /*$authors = new Array_($data['authors']);
-        for ( $i=0; $i<$authors->length(); $i++)
-        {
-            $author = $this->managerRegistry->getRepository(Person::class)->find($data['authors'][$i]->getId());
-            $author->getArticle()->add($article);
-            $article->getAuthors()->add($author);
-
-            $this->objectManager->persist($author);
-        }*/
-
-
 
         $this->objectManager->persist($article);
+
+        //$this->setAuthors($article->getId(), $data['authors']);
 
         $this->objectManager->flush();
 
@@ -77,7 +70,6 @@ class ArticleController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $article = $this->repo->find($data['id']);
-        //$article->setAuthors($data['authors']);
         $article->setTitle($data['title']);
         $article->setType($data['type']);
         $article->setYear($data['year']);
@@ -89,11 +81,12 @@ class ArticleController extends AbstractController
         //$article->setDOI($data['DOI']);
         $article->setJournal($data['journal']);
 
+        //$this->setAuthors($article->getId(),$data['authors']);
+
         $this->objectManager->persist($article);
         $this->objectManager->flush();
 
         return $this->json($article);
-        //return $this->json($data);
     }
 
     #[Route('/article/delete/{id}')]
@@ -102,5 +95,38 @@ class ArticleController extends AbstractController
         $this->repo->remove($this->repo->find($id));
         $this->objectManager->flush();
         return $this->json('success !!');
+    }
+
+    #[Route('/article/{id}/getAuthors')]
+    public function getAuthors(int $id): Response
+    {
+        $article = $this->repo->find($id);
+        return $this->json($article->getAuthors());
+    }
+
+    #[Route('/article/{id}/setAuthors')]
+    public function setAuthors(int $id, Request $request): Response
+    {
+        $article = $this->repo->find($id);
+        $data = json_decode($request->getContent(), true);
+
+        foreach ($article->getAuthors() as $author) {
+            if (!in_array($author->getId(), $data)) {
+                $article->getAuthors()->removeElement($author);
+                $this->objectManager->remove($author);
+            }
+        }
+
+        for($i=0; $i<count($data); $i++)
+        {
+            $author = $this->managerRegistry->getRepository(Person::class)->find($data[$i]);
+            if (!$article->getAuthors()->contains($author)) {
+                $author->getArticle()->add($article);
+                $this->objectManager->persist($author);
+            }
+        }
+
+        $this->objectManager->flush();
+        return $this->json($article->getAuthors());
     }
 }
