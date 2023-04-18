@@ -57,8 +57,6 @@ class ArticleController extends AbstractController
 
         $this->objectManager->persist($article);
 
-        //$this->setAuthors($article->getId(), $data['authors']);
-
         $this->objectManager->flush();
 
         return $this->json($article);
@@ -80,8 +78,6 @@ class ArticleController extends AbstractController
         $article->setUrl($data['url']);
         //$article->setDOI($data['DOI']);
         $article->setJournal($data['journal']);
-
-        //$this->setAuthors($article->getId(),$data['authors']);
 
         $this->objectManager->persist($article);
         $this->objectManager->flush();
@@ -113,7 +109,7 @@ class ArticleController extends AbstractController
         foreach ($article->getAuthors() as $author) {
             if (!in_array($author->getId(), $data)) {
                 $article->getAuthors()->removeElement($author);
-                $this->objectManager->remove($author);
+                //$this->objectManager->remove($author);
             }
         }
 

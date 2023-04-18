@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM ;
 use Symfony\Component\Serializer\Annotation\Ignore;
 
@@ -36,9 +37,9 @@ class Article
 
     #[ORM\Column]
     private ?string $editor;
-
-    #[ORM\Column(length: 255)]
-    private ?string $description;
+/*
+    #[ORM\Column]
+    private ?string $description;*/
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $DOI;
@@ -48,6 +49,9 @@ class Article
 
     #[ORM\ManyToMany(targetEntity: Person::class, mappedBy: 'article')]
     private Collection $authors;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description;
 
     /**
      * @param string|null $title
@@ -90,21 +94,7 @@ class Article
         $this->journal = $journal;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
 
-    /**
-     * @param string|null $description
-     */
-    public function setDescription(?string $description): void
-    {
-        $this->description = $description;
-    }
 
     /**
      * @return string|null
@@ -266,6 +256,18 @@ class Article
     public function setAuthors(Collection $authors): void
     {
         $this->authors = $authors;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     
