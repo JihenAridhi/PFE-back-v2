@@ -43,6 +43,7 @@ class ArticleController extends AbstractController
             ->leftJoin('a.authors','p')
             ->andWhere('p.id=:id')
             ->setParameter(':id', $id)
+            ->orderBy('a.id', 'DESC')
             ->getQuery()
             ->getResult();
         return $this->json($articles);
@@ -109,7 +110,6 @@ class ArticleController extends AbstractController
         foreach ($article->getAuthors() as $author) {
             if (!in_array($author->getId(), $data)) {
                 $article->getAuthors()->removeElement($author);
-                //$this->objectManager->remove($author);
             }
         }
 
@@ -125,4 +125,6 @@ class ArticleController extends AbstractController
         $this->objectManager->flush();
         return $this->json($article->getAuthors());
     }
+
+
 }

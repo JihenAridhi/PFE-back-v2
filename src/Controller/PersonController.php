@@ -107,7 +107,7 @@ class PersonController extends AbstractController
         try {$file->move($server.'assets\userPhoto\\', $fileName);}
         catch (FileException $e) {}
 
-        return $this->json('C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\assets\userPhoto\\'.$fileName);
+        return $this->json('assets\userPhoto\\'.$fileName);
     }
 
     #[Route('photo/user/get/{id}')]
@@ -116,7 +116,7 @@ class PersonController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\userPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json("assets\userPhoto\\".$id.'.jpg');
-        return $this->json('assets\userPhoto\\default.jpg');
+            return $this->json("assets/userPhoto/".$id.'.jpg');
+        return $this->json('assets/userPhoto/default.jpg');
     }
 }

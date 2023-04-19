@@ -57,7 +57,6 @@ class AutorisationController extends AbstractController
             else
             $query[$row['idP']][] = $row['idA'];
         }
-        //$query = array_map(function ($row) {return array_values($row);}, $query);
         $query = array_values($query);
         return $this->json($query);
     }

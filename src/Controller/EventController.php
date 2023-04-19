@@ -2,10 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
 use App\Entity\Event;
-use App\Entity\Person;
-use App\Repository\ArticleRepository;
 use App\Repository\EventRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -92,6 +89,8 @@ class EventController extends AbstractController
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return $this->json("assets\\eventPhoto\\".$id.'.jpg');
-        return $this->json("assets\\eventPhoto\\".'default.jpg');
+        return $this->json('assets\\eventPhoto\\default.jpg');
     }
+
+
 }
