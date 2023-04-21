@@ -37,7 +37,7 @@ class PartnersController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $partner = new Feedback($data['name'], $data['type'], $data['description'], $data['urlpage']);
+        $partner = new Partners($data['name'], $data['type'], $data['description'], $data['urlpage']);
         $this->objectManager->persist($partner);
 
         $this->objectManager->flush();
@@ -50,6 +50,7 @@ class PartnersController extends AbstractController
     public function delete(int $id): Response
     {
         $this->repo->remove($id);
+        $this->objectManager->flush();
         return $this->json('success !!');
     }
 }
