@@ -37,6 +37,10 @@ class PersonController extends AbstractController
     public function getAllByProfession(string $profession): Response
     {return $this->json($this->repo->findBy(['profession' => $profession]));}
 
+    #[Route('/person/getAll/team/{team}')]
+    public function getAllByTeam(string $team): Response
+    {return $this->json($this->repo->findBy(['team' => $team]));}
+
     #[Route('/person/getAll/status/{status}')]
     public function getAllByStatus(bool $status): Response
     {return $this->json($this->repo->findBy(['status'=>$status]));}
@@ -125,20 +129,14 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/sendMailTo/{email}')]
-    public function sendEmail(MailerInterface $mailer,string $email)
+    public function sendEmail(MailerInterface $mailer,string $email): Response
     {
-        try {
-
             $emailMessage = (new Email())
                 ->to($email)
                 ->subject('Test email')
                 ->text('This is a test email sent from Symfony.');
 
-            var_dump("heloooooo");
             $mailer->send($emailMessage);
-
-        }catch (Exception $e){
-        }
 
         return $this->json($emailMessage);
     }

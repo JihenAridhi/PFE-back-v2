@@ -54,7 +54,7 @@ class ArticleController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $article = new Article($data['title'], $data['type'], $data['journal'], $data['year'], $data['firstPage'], $data['lastPage'], $data['editor'], $data['description'], $data['url']);
+        $article = new Article($data['title'], $data['type'], $data['journal'], $data['date'], $data['firstPage'], $data['lastPage'], $data['editor'], $data['description'], $data['url']);
 
         $this->objectManager->persist($article);
 
@@ -71,7 +71,7 @@ class ArticleController extends AbstractController
         $article = $this->repo->find($data['id']);
         $article->setTitle($data['title']);
         $article->setType($data['type']);
-        $article->setYear($data['year']);
+        $article->setDate($data['date']);
         $article->setFirstPage($data['firstPage']);
         $article->setLastPage($data['lastPage']);
         $article->setEditor($data['editor']);

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM ;
@@ -27,9 +28,6 @@ class Article
     private ?string $journal;
 
     #[ORM\Column]
-    private int $year;
-
-    #[ORM\Column]
     private ?int $firstPage;
 
     #[ORM\Column]
@@ -37,10 +35,6 @@ class Article
 
     #[ORM\Column]
     private ?string $editor;
-/*
-    #[ORM\Column]
-    private ?string $description;*/
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $DOI;
 
@@ -53,23 +47,26 @@ class Article
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private DateTime $date;
+
     /**
      * @param string|null $title
      * @param string|null $type
      * @param string|null $journal
-     * @param int|null $year
+     * @param DateTime|null $date
      * @param int|null $firstPage
      * @param int|null $lastPage
      * @param string|null $editor
      * @param string|null $description
      * @param string|null $DOI
      */
-    public function __construct(?string $title, ?string $type, ?string $journal, ?int $year, ?int $firstPage, ?int $lastPage, ?string $editor, ?string $description, ?string $url/*, ?string $DOI*/)
+    public function __construct(?string $title, ?string $type, ?string $journal, ?string $date, ?int $firstPage, ?int $lastPage, ?string $editor, ?string $description, ?string $url/*, ?string $DOI*/)
     {
         $this->title = $title;
         $this->type = $type;
         $this->journal = $journal;
-        $this->year = $year;
+        $this->date = new DateTime($date);
         $this->firstPage = $firstPage;
         $this->lastPage = $lastPage;
         $this->editor = $editor;
@@ -164,22 +161,6 @@ class Article
     /**
      * @return int|null
      */
-    public function getYear(): ?int
-    {
-        return $this->year;
-    }
-
-    /**
-     * @param int|null $year
-     */
-    public function setYear(?int $year): void
-    {
-        $this->year = $year;
-    }
-
-    /**
-     * @return int|null
-     */
     public function getFirstPage(): ?int
     {
         return $this->firstPage;
@@ -266,6 +247,18 @@ class Article
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(string $date): self
+    {
+        $this->date = new DateTime($date);
 
         return $this;
     }
