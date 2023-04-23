@@ -23,7 +23,7 @@ class Partners extends PartnersRepository
     #[ORM\Column(length: 255)]
     private ?string $type ;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(Types::TEXT)]
     private ?string $description ;
 
     #[ORM\Column(length: 255)]
