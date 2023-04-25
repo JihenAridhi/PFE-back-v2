@@ -33,7 +33,7 @@ class Article
     #[ORM\Column]
     private ?int $lastPage;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $editor;
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $DOI;
@@ -61,7 +61,7 @@ class Article
      * @param string|null $description
      * @param string|null $DOI
      */
-    public function __construct(?string $title, ?string $type, ?string $journal, ?string $date, ?int $firstPage, ?int $lastPage, ?string $editor, ?string $description, ?string $url/*, ?string $DOI*/)
+    public function __construct(?string $title, ?string $type, ?string $journal, ?string $date, ?int $firstPage, ?int $lastPage/*, ?string $editor*/, ?string $description, ?string $url/*, ?string $DOI*/)
     {
         $this->title = $title;
         $this->type = $type;
@@ -69,7 +69,7 @@ class Article
         $this->date = new DateTime($date);
         $this->firstPage = $firstPage;
         $this->lastPage = $lastPage;
-        $this->editor = $editor;
+        //$this->editor = $editor;
         $this->description = $description;
         $this->url = $url;
         //$this->DOI = $DOI;

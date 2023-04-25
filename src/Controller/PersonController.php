@@ -132,6 +132,7 @@ class PersonController extends AbstractController
     public function sendEmail(MailerInterface $mailer,string $email): Response
     {
             $emailMessage = (new Email())
+                ->from('roudeinahamdi@gmail.com')
                 ->to($email)
                 ->subject('Test email')
                 ->text('This is a test email sent from Symfony.');
