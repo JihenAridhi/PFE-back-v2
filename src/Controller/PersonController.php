@@ -6,7 +6,6 @@ use App\Entity\Person;
 use App\Repository\PersonRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use PHPUnit\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -128,17 +127,22 @@ class PersonController extends AbstractController
         return $this->json('assets/userPhoto/default.jpg');
     }
 
-    #[Route('/person/sendMailTo/{email}')]
-    public function sendEmail(MailerInterface $mailer,string $email): Response
+    #[Route('/person/sendMailTo')]
+    public function sendEmail(MailerInterface $mailer): Response
     {
             $emailMessage = (new Email())
-                ->from('roudeinahamdi@gmail.com')
-                ->to($email)
+                ->from('aridhijihen1@gmail.com')
+                ->to('aridhijihen1@gmail.com')
                 ->subject('Test email')
                 ->text('This is a test email sent from Symfony.');
 
+        try {
             $mailer->send($emailMessage);
+            return $this->json('aaa');
+        } catch (TransportExceptionInterface $e) {
+            return $this->json('error');
+        }
 
-        return $this->json($emailMessage);
+
     }
 }
