@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,12 +20,14 @@ class PersonController extends AbstractController
     private ManagerRegistry $managerRegistry;
     private PersonRepository $repo;
     private ObjectManager $objectManager;
+    private $mailer;
 
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
         $this->repo = $this->managerRegistry->getRepository(Person::class);
         $this->objectManager = $this->managerRegistry->getManager();
+        $this->mailer = new Mailer(Transport::fromDsn('gmail+smtp://smartlab081@gmail.com:yayrebjziazjhxic@default'));
     }
 
     #[Route('/person/getAll')]
@@ -128,21 +130,19 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/sendMailTo')]
-    public function sendEmail(MailerInterface $mailer): Response
+    public function sendEmail(): Response
     {
-            $emailMessage = (new Email())
-                ->from('aridhijihen1@gmail.com')
-                ->to('aridhijihen1@gmail.com')
-                ->subject('Test email')
-                ->text('This is a test email sent from Symfony.');
+        $email = (new Email())
+            ->to('aridhijihen1@gmail.com')
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
 
-        try {
-            $mailer->send($emailMessage);
-            return $this->json('aaa');
-        } catch (TransportExceptionInterface $e) {
-            return $this->json('error');
-        }
-
-
+            $this->mailer->send($email);
+            return $this->json($email);
     }
 }
