@@ -129,20 +129,17 @@ class PersonController extends AbstractController
         return $this->json('assets/userPhoto/default.jpg');
     }
 
-    #[Route('/person/sendMailTo')]
-    public function sendEmail(): Response
+    #[Route('/person/sendMail')]
+    public function sendEmail(Request $request): Response
     {
+        $data = json_decode($request->getContent(), true);
         $email = (new Email())
-            ->to('aridhijihen1@gmail.com')
-            //->cc('cc@example.com')
-            //->bcc('bcc@example.com')
-            //->replyTo('fabien@example.com')
-            //->priority(Email::PRIORITY_HIGH)
-            ->subject('Time for Symfony Mailer!')
-            ->text('Sending emails is fun again!')
-            ->html('<p>See Twig integration for better HTML integration!</p>');
+            ->from('smartlab081@gmail.com')
+            ->to($data['to'])
+            ->subject($data['subject'])
+            ->html($data['html']);
 
             $this->mailer->send($email);
-            return $this->json($email);
+            return $this->json("sent");
     }
 }
