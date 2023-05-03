@@ -29,7 +29,7 @@ class PartnersController extends AbstractController
     public function getAll(): Response
     {return $this->json($this->repo->findAll());}
 
-    #[Route('/partners/get/{id}')]
+    #[Route('/partner/get/{id}')]
     public function get(int $id): Response
     {return $this->json($this->repo->find($id));}
 
@@ -38,7 +38,7 @@ class PartnersController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $partner = new Partners($data['name'], $data['type'], $data['description'], $data['urlpage']);
+        $partner = new Partners($data['name'], $data['type'], $data['description'], $data['urlPage']);
         $this->objectManager->persist($partner);
 
         $this->objectManager->flush();
@@ -46,6 +46,23 @@ class PartnersController extends AbstractController
         return $this->json('success');
     }
 
+    #[Route('/partner/update')]
+    public function update(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $partner = $this->repo->find($data['id']);
+        $partner->setType($data['type']);
+        $partner->setDescription($data['description']);
+        $partner->setName($data['name']);
+        $partner->setUrlPage($data['urlPage']);
+
+        $this->objectManager->persist($partner);
+
+        $this->objectManager->flush();
+
+        return $this->json('success');
+    }
 
     #[Route('/partner/delete/{id}')]
     public function delete(int $id): Response
@@ -72,7 +89,7 @@ class PartnersController extends AbstractController
     public function getPhoto(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
-        $path = $server."assets\userPhoto\\";
+        $path = $server."assets\partnerPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return $this->json("assets/partnerPhoto/".$id.'.jpg');
         return $this->json('assets/partnerPhoto/default.jpg');

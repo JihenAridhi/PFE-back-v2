@@ -8,8 +8,6 @@ use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use phpDocumentor\Reflection\DocBlock\Tags\Author;
-use PhpParser\Node\Expr\Array_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -62,6 +60,8 @@ class ArticleController extends AbstractController
 
         $article = new Article($data['title'], $data['type'], $data['journal'], $data['date'], $data['firstPage'], $data['lastPage']/*, $data['editor']*/, $data['description'], $data['url']);
 
+        $this->setAuthors($article->getId(), $data['authors']);
+
         $this->objectManager->persist($article);
 
         $this->objectManager->flush();
@@ -77,19 +77,17 @@ class ArticleController extends AbstractController
         $article = $this->repo->find($data['id']);
         $article->setTitle($data['title']);
         $article->setType($data['type']);
-        //$article->setDate($data['date']);
         $article->setFirstPage($data['firstPage']);
         $article->setLastPage($data['lastPage']);
-        //$article->setEditor($data['editor']);
         $article->setDescription($data['description']);
         $article->setUrl($data['url']);
-        //$article->setDOI($data['DOI']);
         $article->setJournal($data['journal']);
+        $this->setAuthors($article->getId(), $data['authors']);
 
         $this->objectManager->persist($article);
         $this->objectManager->flush();
 
-        return $this->json($article);
+        return $this->json($article->getAuthors());
     }
 
     #[Route('/article/delete/{id}')]
@@ -107,26 +105,23 @@ class ArticleController extends AbstractController
         return $this->json($article->getAuthors());
     }
 
-    #[Route('/article/{id}/setAuthors')]
-    public function setAuthors(int $id, Request $request): Response
+    //#[Route('/article/{id}/setAuthors')]
+    public function setAuthors(int $id, array $authors/*Request $request*/): Response
     {
         $article = $this->repo->find($id);
-        $data = json_decode($request->getContent(), true);
-
         foreach ($article->getAuthors() as $author) {
-            if (!in_array($author->getId(), $data)) {
+            if (!in_array($author->getId(), $authors)) {
                 $article->getAuthors()->removeElement($author);
+                $author->getArticle()->removeElement($article);
             }
         }
-
-        for ($i = 0; $i < count($data); $i++) {
-            $author = $this->managerRegistry->getRepository(Person::class)->find($data[$i]);
+        for ($i = 0; $i < count($authors); $i++) {
+            $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
             if (!$article->getAuthors()->contains($author)) {
                 $author->getArticle()->add($article);
                 $this->objectManager->persist($author);
             }
         }
-
         $this->objectManager->flush();
         return $this->json($article->getAuthors());
     }
