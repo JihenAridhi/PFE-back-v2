@@ -32,34 +32,52 @@ class PersonController extends AbstractController
 
     #[Route('/person/getAll')]
     public function getAll(): Response
-    {return $this->json($this->repo->findAll());}
+    {
+        $personList = $this->repo->findAll();
+        foreach ($personList as $person)
+            $person->setPhoto($this->getPhoto($person->getId()));
+        return $this->json($personList);
+    }
 
-    #[Route('/person/getAll/profession/{profession}')]
+/*    #[Route('/person/getAll/profession/{profession}')]
     public function getAllByProfession(string $profession): Response
     {return $this->json($this->repo->findBy(['profession' => $profession]));}
 
     #[Route('/person/getAll/team/{team}')]
     public function getAllByTeam(string $team): Response
-    {return $this->json($this->repo->findBy(['team' => $team]));}
+    {return $this->json($this->repo->findBy(['team' => $team]));}*/
 
     #[Route('/person/getAll/status/{status}')]
     public function getAllByStatus(bool $status): Response
-    {return $this->json($this->repo->findBy(['status'=>$status]));}
+    {
+        $personList = $this->repo->findBy(['status'=>$status]);
+        foreach ($personList as $person)
+            $person->setPhoto($this->getPhoto($person->getId()));
+        return $this->json($personList);
+    }
 
     #[Route('/person/get/{id}')]
     public function get(int $id): Response
-    {return $this->json($this->repo->find($id));}
+    {
+        $person = $this->repo->find($id);
+        $person->setPhoto($this->getPhoto($id));
+        return $this->json($person);
+    }
 
     #[Route('/person/getByEmail/{email}')]
     public function getByEmail(string $email): Response
-    {return $this->json($this->repo->findOneBy(['email'=>$email]));}
+    {
+        $person = $this->repo->findOneBy(['email'=>$email]);
+        $person->setPhoto($this->getPhoto($person->getId()));
+        return $this->json($person);
+    }
 
     #[Route('/person/add')]
     public function add(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = new Person($data['firstName'], $data['lastName'], $data['email'], $data['password']);
+        $person = new Person($data['firstName'], $data['lastName'], $data['email'], $data['password'], "assets/userPhoto/default.jpg");
 
         $this->objectManager->persist($person);
         $this->objectManager->flush();
@@ -119,14 +137,14 @@ class PersonController extends AbstractController
         return $this->json('assets\userPhoto\\'.$fileName);
     }
 
-    #[Route('photo/user/get/{id}')]
+    //#[Route('photo/user/get/{id}')]
     public function getPhoto(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\userPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json("assets/userPhoto/".$id.'.jpg');
-        return $this->json('assets/userPhoto/default.jpg');
+            return /*$this->json(*/"assets/userPhoto/".$id.'.jpg'/*)*/;
+        return /*$this->json(*/'assets/userPhoto/default.jpg'/*)*/;
     }
 
     #[Route('/person/sendMail')]

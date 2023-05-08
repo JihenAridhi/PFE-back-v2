@@ -27,7 +27,12 @@ class PartnersController extends AbstractController
     }
     #[Route('/partner/getAll')]
     public function getAll(): Response
-    {return $this->json($this->repo->findAll());}
+    {
+        $partnerList = $this->repo->findAll();
+        foreach ($partnerList as $partner)
+            $partner->setPhoto($partner->getId());
+        return $this->json($partnerList);
+    }
 
     #[Route('/partner/get/{id}')]
     public function get(int $id): Response
@@ -91,7 +96,7 @@ class PartnersController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\partnerPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json("assets/partnerPhoto/".$id.'.jpg');
-        return $this->json('assets/partnerPhoto/default.jpg');
+            return "assets/partnerPhoto/".$id.'.jpg';
+        return 'assets/partnerPhoto/default.jpg';
     }
 }

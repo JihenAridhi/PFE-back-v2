@@ -32,6 +32,9 @@ class Event extends EventRepository
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description ;
 
+    #[ORM\Transient]
+    private ?string $photo;
+
     /**
      * @param string|null $title
      * @param DateTime|null $date
@@ -79,9 +82,9 @@ class Event extends EventRepository
     /**
      * @param DateTime|null $date
      */
-    public function setDate(?DateTime $date): void
+    public function setDate(?string $date): void
     {
-        $this->date = $date;
+        $this->date = new DateTime($date);
     }
 
     public function getLocation(): ?string
@@ -110,5 +113,21 @@ class Event extends EventRepository
     {
         $this->description = $description;
         return $this;
+    }
+
+    /**
+     * @param string|null $photo
+     */
+    public function setPhoto(?string $photo): void
+    {
+        $this->photo = $photo;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
     }
 }

@@ -50,6 +50,9 @@ class Article
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private DateTime $date;
 
+    /*#[ORM\Column(type: Types::ARRAY)]
+    private array $authorsOrder = [];*/
+
     /**
      * @param string|null $title
      * @param string|null $type
@@ -222,23 +225,6 @@ class Article
         $this->url = $url;
     }
 
-    /**
-     * @return Collection
-     * @Ignore
-     */
-    public function getAuthors()
-    {
-        return $this->authors;
-    }
-
-    /**
-     * @param Collection $authors
-     */
-    public function setAuthors(Collection $authors): void
-    {
-        $this->authors = $authors;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -263,6 +249,31 @@ class Article
         return $this;
     }
 
-    
+    /**
+     * @return Collection
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
 
+    /**
+     * @param Collection $authors
+     */
+    public function setAuthors(Collection $authors): void
+    {
+        $this->authors = $authors;
+    }
+
+    /*public function getAuthorsOrder(): array
+    {
+        return $this->authorsOrder;
+    }
+
+    public function setAuthorsOrder(array $authorsOrder): self
+    {
+        $this->authorsOrder = $authorsOrder;
+
+        return $this;
+    }*/
 }

@@ -15,6 +15,7 @@ class Person
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    //#[ORM\OneToMany(targetEntity: PersonArticle::class, mappedBy: 'person_id')]
     private ?int $id;
 
     #[ORM\Column(length: 255)]
@@ -46,6 +47,9 @@ class Person
 
     #[ORM\ManyToMany(targetEntity: Autorisation::class, mappedBy: 'person')]
     private Collection $autorisations;
+
+    #[ORM\Transient]
+    private ?string $photo;
 
     public function __construct(?string $firstName, ?string $lastName, ?string $email, ?string $password)
     {
@@ -238,6 +242,19 @@ class Person
         $this->autorisations = $autorisations;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
 
-
+    /**
+     * @param string|null $photo
+     */
+    public function setPhoto(?string $photo): void
+    {
+        $this->photo = $photo;
+    }
 }

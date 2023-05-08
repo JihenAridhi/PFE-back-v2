@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Person;
+use App\Entity\PersonArticle;
 use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -105,11 +105,20 @@ class ArticleController extends AbstractController
         return $this->json($article->getAuthors());
     }
 
-    //#[Route('/article/{id}/setAuthors')]
-    public function setAuthors(int $id, array $authors/*Request $request*/): Response
+    public function setAuthors(int $id, array $authors): Response
     {
         $article = $this->repo->find($id);
-        foreach ($article->getAuthors() as $author) {
+        foreach ($article->getAuthors() as $author)
+            $author->getArticle()->removeElement($article);
+        $article->getAuthors()->clear();
+        for ($i = 0; $i < count($authors); $i++)
+        {
+            $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
+            $author->getArticle()->add($article);
+            $article->getAuthorsOrder()[] = $author->getId();
+            $this->objectManager->persist($author);
+        }
+        /*foreach ($article->getAuthors() as $author) {
             if (!in_array($author->getId(), $authors)) {
                 $article->getAuthors()->removeElement($author);
                 $author->getArticle()->removeElement($article);
@@ -121,9 +130,9 @@ class ArticleController extends AbstractController
                 $author->getArticle()->add($article);
                 $this->objectManager->persist($author);
             }
-        }
+        }*/
         $this->objectManager->flush();
-        return $this->json($article->getAuthors());
+        return $this->json($article);
     }
 
     #[Route('article/file')]

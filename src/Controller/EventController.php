@@ -26,11 +26,20 @@ class EventController extends AbstractController
     }
     #[Route('/event/getAll')]
     public function getAll(): Response
-    {return $this->json($this->repo->findAll());}
+    {
+        $eventList = $this->repo->findAll();
+        foreach ($eventList as $event)
+            $event->setPhoto($this->getPhoto($event->getId()));
+        return $this->json($eventList);
+    }
 
     #[Route('/event/get/{id}')]
     public function get(int $id): Response
-    {return $this->json($this->repo->find($id));}
+    {
+        $event = $this->repo->find($id);
+        $event->setPhoto($this->getPhoto($id));
+        return $this->json($event);
+    }
 
     #[Route('/event/add')]
     public function add(Request $request): Response
@@ -82,14 +91,14 @@ class EventController extends AbstractController
         return $this->json('');
     }
 
-    #[Route('photo/event/get/{id}')]
-    public function getPhoto(int $id)
+    //#[Route('photo/event/get/{id}')]
+    public function getPhoto(int $id): string
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json("assets\\eventPhoto\\".$id.'.jpg');
-        return $this->json('assets\\eventPhoto\\default.jpg');
+            return "assets\\eventPhoto\\".$id.'.jpg';
+        return 'assets\\eventPhoto\\default.jpg';
     }
 
 

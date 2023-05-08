@@ -25,6 +25,9 @@ class News
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description ;
 
+    #[ORM\Transient]
+    private ?string $photo;
+
     /**
      * @param string|null $title
      * @param DateTime|null $date
@@ -67,9 +70,9 @@ class News
     /**
      * @param DateTime|null $date
      */
-    public function setDate(?DateTime $date): void
+    public function setDate(?string $date): void
     {
-        $this->date = $date;
+        $this->date = new DateTime($date);
     }
 
     /**
@@ -92,6 +95,21 @@ class News
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param string|null $photo
+     */
+    public function setPhoto(?string $photo): void
+    {
+        $this->photo = $photo;
+    }
 
 
 }

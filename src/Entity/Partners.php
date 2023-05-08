@@ -29,8 +29,8 @@ class Partners extends PartnersRepository
     #[ORM\Column(length: 255)]
     private ?string $urlPage ;
 
-    #[ORM\Column(type: Types::BLOB , nullable: true) ]
-    private $photo = null;
+    #[ORM\Transient]
+    private ?string $photo;
 
     /**
      * @param string|null $name
@@ -126,6 +126,21 @@ class Partners extends PartnersRepository
         $this->urlPage = $urlPage;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param string|null $photo
+     */
+    public function setPhoto(?string $photo): void
+    {
+        $this->photo = $photo;
+    }
 
 
 }

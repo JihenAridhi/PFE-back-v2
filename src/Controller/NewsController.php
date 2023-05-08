@@ -28,12 +28,18 @@ class NewsController extends AbstractController
 
     #[Route('/news/getAll')]
     public function getAll(): Response
-    {return $this->json($this->repo->findAll());}
+    {
+        $newsList = $this->repo->findAll();
+        foreach ($newsList as $news)
+            $news->setPhoto($this->getPhoto($news->getId()));
+        return $this->json($newsList);
+    }
 
     #[Route('/news/get/{id}')]
     public function get(int $id): Response
     {
         $news = $this->repo->find($id);
+        $news->setPhoto($this->getPhoto($id));
         return $this->json($news);
     }
 
@@ -58,7 +64,7 @@ class NewsController extends AbstractController
         $news = $this->repo->find($data['id']);
 
         $news->setTitle($data['title']);
-        $news->setDate(DateTime::createFromFormat('d-m-Y H:i:s', $data['date']));
+        $news->setDate($data['date']);
         $news->setDescription($data['description']);
         //$news->setPhoto($data['photo']);
 
@@ -89,13 +95,13 @@ class NewsController extends AbstractController
         return $this->json('');
     }
 
-    #[Route('photo/news/get/{id}')]
+    //#[Route('photo/news/get/{id}')]
     public function getPhoto(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\\newsPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return $this->json("assets\\newsPhoto\\".$id.'.jpg');
-        return $this->json("assets\\newsPhoto\\".'default.jpg');
+            return "assets\\newsPhoto\\".$id.'.jpg';
+        return "assets\\newsPhoto\\".'default.jpg';
     }
 }
