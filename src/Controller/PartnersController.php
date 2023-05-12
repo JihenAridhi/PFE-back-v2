@@ -30,7 +30,7 @@ class PartnersController extends AbstractController
     {
         $partnerList = $this->repo->findAll();
         foreach ($partnerList as $partner)
-            $partner->setPhoto($partner->getId());
+            $partner->setPhoto($this->getPhoto($partner->getId()));
         return $this->json($partnerList);
     }
 
@@ -90,8 +90,8 @@ class PartnersController extends AbstractController
         return $this->json('assets\partnerPhoto\\'.$fileName);
     }
 
-    #[Route('photo/partner/get/{id}')]
-    public function getPhoto(int $id)
+    //#[Route('photo/partner/get/{id}')]
+    public function getPhoto(int $id): string
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server."assets\partnerPhoto\\";

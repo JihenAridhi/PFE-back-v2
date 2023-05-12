@@ -68,7 +68,6 @@ class PersonController extends AbstractController
     public function getByEmail(string $email): Response
     {
         $person = $this->repo->findOneBy(['email'=>$email]);
-        $person->setPhoto($this->getPhoto($person->getId()));
         return $this->json($person);
     }
 

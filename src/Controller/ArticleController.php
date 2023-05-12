@@ -108,7 +108,7 @@ class ArticleController extends AbstractController
     public function setAuthors(int $id, array $authors): Response
     {
         $article = $this->repo->find($id);
-        foreach ($article->getAuthors() as $author)
+        /*foreach ($article->getAuthors() as $author)
             $author->getArticle()->removeElement($article);
         $article->getAuthors()->clear();
         for ($i = 0; $i < count($authors); $i++)
@@ -117,8 +117,8 @@ class ArticleController extends AbstractController
             $author->getArticle()->add($article);
             $article->getAuthorsOrder()[] = $author->getId();
             $this->objectManager->persist($author);
-        }
-        /*foreach ($article->getAuthors() as $author) {
+        }*/
+        foreach ($article->getAuthors() as $author) {
             if (!in_array($author->getId(), $authors)) {
                 $article->getAuthors()->removeElement($author);
                 $author->getArticle()->removeElement($article);
@@ -130,7 +130,7 @@ class ArticleController extends AbstractController
                 $author->getArticle()->add($article);
                 $this->objectManager->persist($author);
             }
-        }*/
+        }
         $this->objectManager->flush();
         return $this->json($article);
     }
