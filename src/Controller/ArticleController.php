@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Person;
-use App\Entity\PersonArticle;
 use App\Repository\ArticleRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -58,7 +57,7 @@ class ArticleController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $article = new Article($data['title'], $data['type'], $data['journal'], $data['date'], $data['firstPage'], $data['lastPage']/*, $data['editor']*/, $data['description'], $data['url']);
+        $article = new Article($data['title'], $data['type'], $data['year'], $data['month'], $data['institute'], $data['firstPage'], $data['lastPage'], $data['editor'], $data['description'], $data['url']);
 
         $this->setAuthors($article->getId(), $data['authors']);
 
@@ -77,11 +76,15 @@ class ArticleController extends AbstractController
         $article = $this->repo->find($data['id']);
         $article->setTitle($data['title']);
         $article->setType($data['type']);
+        /*if ($article->getType()=='')
+        $article->setEditor($data['editor']);*/
+        $article->setYear($data['year']);
+        //$article->setMonth($data['month']);
+        //$article->setInstitute($data['institute']);
         $article->setFirstPage($data['firstPage']);
         $article->setLastPage($data['lastPage']);
         $article->setDescription($data['description']);
         $article->setUrl($data['url']);
-        $article->setJournal($data['journal']);
         $this->setAuthors($article->getId(), $data['authors']);
 
         $this->objectManager->persist($article);
@@ -108,16 +111,7 @@ class ArticleController extends AbstractController
     public function setAuthors(int $id, array $authors): Response
     {
         $article = $this->repo->find($id);
-        /*foreach ($article->getAuthors() as $author)
-            $author->getArticle()->removeElement($article);
-        $article->getAuthors()->clear();
-        for ($i = 0; $i < count($authors); $i++)
-        {
-            $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
-            $author->getArticle()->add($article);
-            $article->getAuthorsOrder()[] = $author->getId();
-            $this->objectManager->persist($author);
-        }*/
+
         foreach ($article->getAuthors() as $author) {
             if (!in_array($author->getId(), $authors)) {
                 $article->getAuthors()->removeElement($author);
@@ -141,16 +135,17 @@ class ArticleController extends AbstractController
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
-        try {
-            $file->move($server . 'assets\aricleFile\\', $fileName);
-        } catch (FileException $e) {
-        }
+        $oldFile = glob($server . 'assets\aricleFile\\'.pathinfo($fileName, PATHINFO_FILENAME).'.*');
+        if (!empty($oldFile))
+            unlink($oldFile[0]);
+        try {$file->move($server . 'assets\aricleFile\\', $fileName);}
+        catch (FileException $e) {}
 
         return $this->json('assets\aricleFile\\' . $fileName);
     }
 
     #[Route('article/file/get/{id}')]
-    public function getPhoto(int $id)
+    public function getArticle(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $path = $server . "assets\aricleFile\\";

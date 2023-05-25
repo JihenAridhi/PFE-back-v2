@@ -36,9 +36,6 @@ class Person
     #[ORM\Column(length: 255 , nullable: true)]
     private ?string $team;
 
-    #[ORM\Column(length: 255 , nullable: true)]
-    private ?string $interest;
-
     #[ORM\Column]
     private ?bool $status;
 
@@ -47,6 +44,9 @@ class Person
 
     #[ORM\ManyToMany(targetEntity: Autorisation::class, mappedBy: 'person')]
     private Collection $autorisations;
+
+    #[ORM\ManyToMany(targetEntity: Theme::class, mappedBy: 'person')]
+    private Collection $themes;
 
     #[ORM\Transient]
     private ?string $photo;
@@ -59,7 +59,6 @@ class Person
         $this->password = $password;
         $this->profession = null;
         $this->team = null;
-        $this->interest = null;
         $this->status = false;
     }
 
@@ -177,22 +176,6 @@ class Person
     }
 
     /**
-     * @return string|null
-     */
-    public function getInterest(): ?string
-    {
-        return $this->interest;
-    }
-
-    /**
-     * @param string|null $interest
-     */
-    public function setInterest(?string $interest): void
-    {
-        $this->interest = $interest;
-    }
-
-    /**
      * @return bool|null
      */
     public function getStatus(): ?bool
@@ -256,5 +239,21 @@ class Person
     public function setPhoto(?string $photo): void
     {
         $this->photo = $photo;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getThemes(): Collection
+    {
+        return $this->themes;
+    }
+
+    /**
+     * @param Collection $themes
+     */
+    public function setThemes(Collection $themes): void
+    {
+        $this->themes = $themes;
     }
 }

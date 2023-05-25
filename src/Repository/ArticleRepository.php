@@ -39,7 +39,7 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     public function findAll()
-    {return $this->findBy(array(), array('id' => 'DESC'));}
+    {return $this->findBy(array(), array('year' => 'DESC'));}
 
 //    /**
 //     * @return Article[] Returns an array of Article objects

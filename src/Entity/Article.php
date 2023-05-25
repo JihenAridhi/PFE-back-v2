@@ -3,11 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
-use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM ;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
 
@@ -21,11 +19,8 @@ class Article
     #[ORM\Column(length: 255)]
     private ?string $title;
 
-    #[ORM\Column(length: 255 , nullable: true)]
-    private ?string $type;
-
     #[ORM\Column(length: 255)]
-    private ?string $journal;
+    private ?string $type;
 
     #[ORM\Column]
     private ?int $firstPage;
@@ -47,8 +42,14 @@ class Article
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private DateTime $date;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $institute = null;
+
+    #[ORM\Column]
+    private ?int $year = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $month = null;
 
     /*#[ORM\Column(type: Types::ARRAY)]
     private array $authorsOrder = [];*/
@@ -56,44 +57,27 @@ class Article
     /**
      * @param string|null $title
      * @param string|null $type
-     * @param string|null $journal
-     * @param DateTime|null $date
+     * @param string|null $type
      * @param int|null $firstPage
      * @param int|null $lastPage
      * @param string|null $editor
      * @param string|null $description
      * @param string|null $DOI
      */
-    public function __construct(?string $title, ?string $type, ?string $journal, ?string $date, ?int $firstPage, ?int $lastPage/*, ?string $editor*/, ?string $description, ?string $url/*, ?string $DOI*/)
+    public function __construct(?string $title, ?string $type, ?string $year, ?string $month, ?string $institute, ?int $firstPage, ?int $lastPage, ?string $editor, ?string $description, ?string $url/*, ?string $DOI*/)
     {
         $this->title = $title;
         $this->type = $type;
-        $this->journal = $journal;
-        $this->date = new DateTime($date);
         $this->firstPage = $firstPage;
         $this->lastPage = $lastPage;
-        //$this->editor = $editor;
+        $this->editor = $editor;
         $this->description = $description;
         $this->url = $url;
+        $this->year = $year;
+        $this->month = $month;
+        $this->institute = $institute;
         //$this->DOI = $DOI;
     }
-
-    /**
-     * @return string|null
-     */
-    public function getJournal(): ?string
-    {
-        return $this->journal;
-    }
-
-    /**
-     * @param string|null $journal
-     */
-    public function setJournal(?string $journal): void
-    {
-        $this->journal = $journal;
-    }
-
 
 
     /**
@@ -237,18 +221,6 @@ class Article
         return $this;
     }
 
-    public function getDate(): DateTime
-    {
-        return $this->date;
-    }
-
-    public function setDate(string $date): self
-    {
-        $this->date = new DateTime($date);
-
-        return $this;
-    }
-
     /**
      * @return Collection
      */
@@ -276,4 +248,40 @@ class Article
 
         return $this;
     }*/
+
+    public function getInstitute(): ?string
+    {
+        return $this->institute;
+    }
+
+    public function setInstitute(?string $institute): self
+    {
+        $this->institute = $institute;
+
+        return $this;
+    }
+
+    public function getYear(): ?int
+    {
+        return $this->year;
+    }
+
+    public function setYear(int $year): self
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    public function getMonth(): ?int
+    {
+        return $this->month;
+    }
+
+    public function setMonth(?int $month): self
+    {
+        $this->month = $month;
+
+        return $this;
+    }
 }

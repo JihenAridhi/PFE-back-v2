@@ -68,6 +68,19 @@ class PersonController extends AbstractController
     public function getByEmail(string $email): Response
     {
         $person = $this->repo->findOneBy(['email'=>$email]);
+        $person->setPhoto($this->getPhoto($person->getId()));
+        return $this->json($person);
+    }
+
+    #[Route('/person/getEmail/{email}')]
+    public function getEmail(string $email): Response
+    {
+        $person = $this->repo->createQueryBuilder('p')
+            ->select('p.email')
+            ->where('p.email=:email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
         return $this->json($person);
     }
 
@@ -136,7 +149,7 @@ class PersonController extends AbstractController
         return $this->json('assets\userPhoto\\'.$fileName);
     }
 
-    //#[Route('photo/user/get/{id}')]
+    #[Route('photo/user/get/{id}')]
     public function getPhoto(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
