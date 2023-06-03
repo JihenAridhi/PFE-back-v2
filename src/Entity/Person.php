@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PersonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,7 +16,6 @@ class Person
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    //#[ORM\OneToMany(targetEntity: PersonArticle::class, mappedBy: 'person_id')]
     private ?int $id;
 
     #[ORM\Column(length: 255)]
@@ -39,8 +39,11 @@ class Person
     #[ORM\Column]
     private ?bool $status;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'authors')]
-    private Collection $article;
+    #[ORM\Column]
+    private ?bool $coAuthor;
+
+    /*#[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'authors')]
+    private Collection $article;*/
 
     #[ORM\ManyToMany(targetEntity: Autorisation::class, mappedBy: 'person')]
     private Collection $autorisations;
@@ -51,6 +54,30 @@ class Person
     #[ORM\Transient]
     private ?string $photo;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: ArticlePerson::class)]
+    private Collection $articleAuthor;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $phone = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $researchGate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $orcid = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $scholar = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $linkedin = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $dblp = null;
+
     public function __construct(?string $firstName, ?string $lastName, ?string $email, ?string $password)
     {
         $this->firstName = $firstName;
@@ -60,6 +87,7 @@ class Person
         $this->profession = null;
         $this->team = null;
         $this->status = false;
+        $this->articleAuthor = new ArrayCollection();
     }
 
 
@@ -195,23 +223,6 @@ class Person
      * @return Collection
      * @Ignore
      */
-    public function getArticle(): Collection
-    {
-        return $this->article;
-    }
-
-    /**
-     * @param Collection $article
-     */
-    public function setArticle(Collection $article): void
-    {
-        $this->article = $article;
-    }
-
-    /**
-     * @return Collection
-     * @Ignore
-     */
     public function getAutorisations(): Collection
     {
         return $this->autorisations;
@@ -256,4 +267,136 @@ class Person
     {
         $this->themes = $themes;
     }
+
+    /**
+     * @return Collection<int, ArticlePerson>
+     * @Ignore
+     */
+    public function getArticleAuthor(): Collection
+    {
+        return $this->articleAuthor;
+    }
+
+    public function addArticlePerson(ArticlePerson $articlePerson): self
+    {
+        if (!$this->articleAuthor->contains($articlePerson)) {
+            $this->articleAuthor->add($articlePerson);
+            $articlePerson->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticlePerson(ArticlePerson $articlePerson): self
+    {
+        if ($this->articleAuthor->removeElement($articlePerson)) {
+            // set the owning side to null (unless already changed)
+            if ($articlePerson->getAuthor() === $this) {
+                $articlePerson->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getCoAuthor(): ?bool
+    {
+        return $this->coAuthor;
+    }
+
+    /**
+     * @param bool|null $coAuthor
+     */
+    public function setCoAuthor(?bool $coAuthor): void
+    {
+        $this->coAuthor = $coAuthor;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+
+        return $this;
+    }
+
+    public function getResearchGate(): ?string
+    {
+        return $this->researchGate;
+    }
+
+    public function setResearchGate(?string $researchGate): self
+    {
+        $this->researchGate = $researchGate;
+
+        return $this;
+    }
+
+    public function getOrcid(): ?string
+    {
+        return $this->orcid;
+    }
+
+    public function setOrcid(?string $orcid): self
+    {
+        $this->orcid = $orcid;
+
+        return $this;
+    }
+
+    public function getScholar(): ?string
+    {
+        return $this->scholar;
+    }
+
+    public function setScholar(?string $scholar): self
+    {
+        $this->scholar = $scholar;
+
+        return $this;
+    }
+
+    public function getLinkedin(): ?string
+    {
+        return $this->linkedin;
+    }
+
+    public function setLinkedin(?string $linkedin): self
+    {
+        $this->linkedin = $linkedin;
+
+        return $this;
+    }
+
+    public function getDblp(): ?string
+    {
+        return $this->dblp;
+    }
+
+    public function setDblp(?string $dblp): self
+    {
+        $this->dblp = $dblp;
+
+        return $this;
+    }
+
 }

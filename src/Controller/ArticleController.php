@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\ArticlePerson;
 use App\Entity\Person;
 use App\Repository\ArticleRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,25 +31,43 @@ class ArticleController extends AbstractController
     #[Route('/article/getAll')]
     public function getAll(): Response
     {
-        return $this->json($this->repo->findAll());
+        $articles = $this->repo->findAll();
+        foreach ($articles as $article)
+            $article->setAuthors();
+        return $this->json($articles);
     }
 
     #[Route('/article/get/{id}')]
     public function get(int $id): Response
     {
-        return $this->json($this->repo->find($id));
+        //return $this->json($this->repo->find($id));
+        /*return $this->json($this->repo->createQueryBuilder('a')
+        ->select( 'a', 'ap.author')
+        ->leftJoin('a.articleAuthor', 'ap')
+        ->leftJoin('ap.author', 'authors')
+        ->where('a.id=:id')
+        ->setParameter('id', $id)
+        ->orderBy('ap.id')
+        ->getQuery()
+        ->getResult());*/
+
+        $article = $this->repo->find($id);
+        $article->setAuthors();
+        return $this->json($article);
     }
 
     #[Route('/article/getAll/{id}')]
     public function getPersonArticles(int $id): Response
     {
         $articles = $this->repo->createQueryBuilder('a')
-            ->leftJoin('a.authors', 'p')
-            ->andWhere('p.id=:id')
+            ->leftJoin('a.articleAuthor', 'p')
+            ->andWhere('p.author=:id')
             ->setParameter(':id', $id)
-            ->orderBy('a.id', 'DESC')
+            ->orderBy('a.year', 'DESC')
             ->getQuery()
             ->getResult();
+        foreach ($articles as $article)
+            $article->setAuthors();
         return $this->json($articles);
     }
 
@@ -57,13 +76,13 @@ class ArticleController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $article = new Article($data['title'], $data['type'], $data['year'], $data['month'], $data['institute'], $data['firstPage'], $data['lastPage'], $data['editor'], $data['description'], $data['url']);
-
-        $this->setAuthors($article->getId(), $data['authors']);
+        $article = new Article($data['title'], $data['type'], $data['year'], $data['description']);
+        $this->setInfo($article, $data);
 
         $this->objectManager->persist($article);
-
         $this->objectManager->flush();
+
+        $this->setAuthors($article, $data['authors']);
 
         return $this->json($article);
     }
@@ -76,21 +95,38 @@ class ArticleController extends AbstractController
         $article = $this->repo->find($data['id']);
         $article->setTitle($data['title']);
         $article->setType($data['type']);
-        /*if ($article->getType()=='')
-        $article->setEditor($data['editor']);*/
         $article->setYear($data['year']);
-        //$article->setMonth($data['month']);
-        //$article->setInstitute($data['institute']);
-        $article->setFirstPage($data['firstPage']);
-        $article->setLastPage($data['lastPage']);
         $article->setDescription($data['description']);
-        $article->setUrl($data['url']);
-        $this->setAuthors($article->getId(), $data['authors']);
+        $this->setInfo($article, $data);
 
         $this->objectManager->persist($article);
         $this->objectManager->flush();
 
-        return $this->json($article->getAuthors());
+        $this->setAuthors($article, $data['authors']);
+
+        return $this->json($article);
+    }
+
+    public function setInfo(Article $article, $data)
+    {
+        $article->setName($data['name']);
+        $article->setBibtex($data['bibtex']);
+        if ($data['type']=='Journal')
+        {
+            $article->setVolume($data['volume']);
+            $article->setNumero($data['numero']);
+            $article->setFirstPage($data['firstPage']);
+            $article->setLastPage($data['lastPage']);
+        }
+        if ($data['type']=='Conference')
+        {
+            $article->setMonth($data['month']);
+            $article->setLocation($data['location']);
+        }
+        if ($data['type']=='Book')
+            $article->setEditor($data['editor']);
+        if ($data['type']=='Thesis')
+            $article->setInstitute($data['institute']);
     }
 
     #[Route('/article/delete/{id}')]
@@ -108,26 +144,52 @@ class ArticleController extends AbstractController
         return $this->json($article->getAuthors());
     }
 
-    public function setAuthors(int $id, array $authors): Response
+    public function setAuthors(Article $article, array $authors): Response
     {
-        $article = $this->repo->find($id);
-
-        foreach ($article->getAuthors() as $author) {
-            if (!in_array($author->getId(), $authors)) {
-                $article->getAuthors()->removeElement($author);
-                $author->getArticle()->removeElement($article);
-            }
+        foreach ($article->getArticleAuthor() as $association) {
+            $author = $association->getAuthor();
+            $author->getArticleAuthor()->removeElement($association);
+            $article->getArticleAuthor()->removeElement($association);
+            $this->objectManager->remove($association);
         }
-        for ($i = 0; $i < count($authors); $i++) {
-            $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
-            if (!$article->getAuthors()->contains($author)) {
-                $author->getArticle()->add($article);
+
+        for ($i=0; $i<count($authors); $i++)
+        {
+            if(!$authors[$i]['id']) {
+                $author = new Person($authors[$i]['firstName'], $authors[$i]['lastName'], null, null);
+                $author->setCoAuthor(true);
                 $this->objectManager->persist($author);
             }
+            else
+                $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]['id']);
+
+            $association = new ArticlePerson($article, $author);
+            $this->objectManager->persist($association);
         }
+
         $this->objectManager->flush();
         return $this->json($article);
     }
+
+    /*public function setAuthors(Article $article, array $authors): Response
+{
+
+    foreach ($article->getAuthors() as $author) {
+        if (!in_array($author->getId(), $authors)) {
+            $article->getAuthors()->removeElement($author);
+            $author->getArticle()->removeElement($article);
+        }
+    }
+    for ($i = 0; $i < count($authors); $i++) {
+        $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
+        if (!$article->getAuthors()->contains($author)) {
+            $author->getArticle()->add($article);
+            $this->objectManager->persist($author);
+        }
+    }
+    $this->objectManager->flush();
+    return $this->json($article);
+}*/
 
     #[Route('article/file')]
     public function upload(Request $request): Response

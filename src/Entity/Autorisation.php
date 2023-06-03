@@ -25,10 +25,9 @@ class Autorisation extends AutorisationRepository
      * @param string|null $autorisation
      * @param Collection $person
      */
-    public function __construct(?string $autorisation/*, Collection $person*/)
+    public function __construct(?string $autorisation)
     {
         $this->autorisation = $autorisation;
-        //$this->person = $person;
     }
 
     /**

@@ -3,12 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM ;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass : ArticleRepository::class)]
-
 class Article
 {
     #[ORM\Id]
@@ -22,28 +23,11 @@ class Article
     #[ORM\Column(length: 255)]
     private ?string $type;
 
-    #[ORM\Column]
-    private ?int $firstPage;
-
-    #[ORM\Column]
-    private ?int $lastPage;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $editor;
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $DOI;
-
-    #[ORM\Column(length: 255)]
-    private ?string $url;
-
-    #[ORM\ManyToMany(targetEntity: Person::class, mappedBy: 'article')]
-    private Collection $authors;
-
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $institute = null;
+    /*#[ORM\ManyToMany(targetEntity: Person::class, mappedBy: 'article')]
+    private Collection $authors;*/
 
     #[ORM\Column]
     private ?int $year = null;
@@ -51,51 +35,58 @@ class Article
     #[ORM\Column(nullable: true)]
     private ?int $month = null;
 
-    /*#[ORM\Column(type: Types::ARRAY)]
-    private array $authorsOrder = [];*/
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $institute = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $firstPage;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $lastPage;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $editor;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $volume = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $numero = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $bibtex = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $location = null;
+
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticlePerson::class)]
+    private Collection $articleAuthor;
+
+    #[ORM\Transient]
+    private Collection $authors;
+
+
+    /*#[ORM\Column(length: 255)]
+        private ?string $url;*/
+
 
     /**
      * @param string|null $title
      * @param string|null $type
-     * @param string|null $type
-     * @param int|null $firstPage
-     * @param int|null $lastPage
-     * @param string|null $editor
      * @param string|null $description
-     * @param string|null $DOI
+     * @param int|null $year
      */
-    public function __construct(?string $title, ?string $type, ?string $year, ?string $month, ?string $institute, ?int $firstPage, ?int $lastPage, ?string $editor, ?string $description, ?string $url/*, ?string $DOI*/)
+    public function __construct(?string $title, ?string $type, ?int $year, ?string $description)
     {
         $this->title = $title;
         $this->type = $type;
-        $this->firstPage = $firstPage;
-        $this->lastPage = $lastPage;
-        $this->editor = $editor;
         $this->description = $description;
-        $this->url = $url;
         $this->year = $year;
-        $this->month = $month;
-        $this->institute = $institute;
-        //$this->DOI = $DOI;
+        $this->articleAuthor = new ArrayCollection();
     }
-
-
-    /**
-     * @return string|null
-     */
-    public function getDOI(): ?string
-    {
-        return $this->DOI;
-    }
-
-    /**
-     * @param string|null $DOI
-     */
-    public function setDOI(?string $DOI): void
-    {
-        $this->DOI = $DOI;
-    }
-
 
     /**
      * @return int|null
@@ -193,22 +184,6 @@ class Article
         $this->editor = $editor;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    /**
-     * @param string|null $url
-     */
-    public function setUrl(?string $url): void
-    {
-        $this->url = $url;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -220,34 +195,6 @@ class Article
 
         return $this;
     }
-
-    /**
-     * @return Collection
-     */
-    public function getAuthors(): Collection
-    {
-        return $this->authors;
-    }
-
-    /**
-     * @param Collection $authors
-     */
-    public function setAuthors(Collection $authors): void
-    {
-        $this->authors = $authors;
-    }
-
-    /*public function getAuthorsOrder(): array
-    {
-        return $this->authorsOrder;
-    }
-
-    public function setAuthorsOrder(array $authorsOrder): self
-    {
-        $this->authorsOrder = $authorsOrder;
-
-        return $this;
-    }*/
 
     public function getInstitute(): ?string
     {
@@ -284,4 +231,118 @@ class Article
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getVolume(): ?string
+    {
+        return $this->volume;
+    }
+
+    public function setVolume(?string $volume): self
+    {
+        $this->volume = $volume;
+
+        return $this;
+    }
+
+    public function getNumero(): ?string
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(?string $numero): self
+    {
+        $this->numero = $numero;
+
+        return $this;
+    }
+
+    public function getBibtex(): ?string
+    {
+        return $this->bibtex;
+    }
+
+    public function setBibtex(string $bibtex): self
+    {
+        $this->bibtex = $bibtex;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticlePerson>
+     * @Ignore
+     */
+    public function getArticleAuthor(): Collection
+    {
+        return $this->articleAuthor;
+    }
+
+    public function addArticlePerson(ArticlePerson $articlePerson): self
+    {
+        if (!$this->articleAuthor->contains($articlePerson)) {
+            $this->articleAuthor->add($articlePerson);
+            $articlePerson->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticlePerson(ArticlePerson $articlePerson): self
+    {
+        if ($this->articleAuthor->removeElement($articlePerson)) {
+            // set the owning side to null (unless already changed)
+            if ($articlePerson->getArticle() === $this) {
+                $articlePerson->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string|null $location
+     */
+    public function setLocation(?string $location): void
+    {
+        $this->location = $location;
+    }
+
+    /**
+     * @param Collection $authors
+     */
+    public function setAuthors(): void
+    {
+        $this->authors = new ArrayCollection();
+        for($i=0; $i<count($this->articleAuthor); $i++)
+            $this->authors[$i]=$this->articleAuthor[$i]->getAuthor();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAuthors(): Collection
+    {
+        return $this->authors;
+    }
+
 }

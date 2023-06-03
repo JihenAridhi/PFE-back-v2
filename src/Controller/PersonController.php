@@ -39,14 +39,6 @@ class PersonController extends AbstractController
         return $this->json($personList);
     }
 
-/*    #[Route('/person/getAll/profession/{profession}')]
-    public function getAllByProfession(string $profession): Response
-    {return $this->json($this->repo->findBy(['profession' => $profession]));}
-
-    #[Route('/person/getAll/team/{team}')]
-    public function getAllByTeam(string $team): Response
-    {return $this->json($this->repo->findBy(['team' => $team]));}*/
-
     #[Route('/person/getAll/status/{status}')]
     public function getAllByStatus(bool $status): Response
     {
@@ -89,7 +81,16 @@ class PersonController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = new Person($data['firstName'], $data['lastName'], $data['email'], $data['password'], "assets/userPhoto/default.jpg");
+        $person = new Person($data['firstName'], $data['lastName'], $data['email'], $data['password']);
+
+        $person->setBio($data['bio']);
+        $person->setDblp($data['dblp']);
+        $person->setOrcid($data['orcid']);
+        $person->setLinkedin($data['linkedin']);
+        $person->setResearchGate($data['researchGate']);
+        $person->setScholar($data['scholar']);
+        $person->setPhone($data['phone']);
+        $person->setCoAuthor(false);
 
         $this->objectManager->persist($person);
         $this->objectManager->flush();
@@ -109,8 +110,13 @@ class PersonController extends AbstractController
         $person->setPassword($data['password']);
         $person->setProfession($data['profession']);
         $person->setTeam($data['team']);
-        $person->setInterest($data['interest']);
-        $person->setStatus(true);
+        $person->setBio($data['bio']);
+        $person->setDblp($data['dblp']);
+        $person->setOrcid($data['orcid']);
+        $person->setLinkedin($data['linkedin']);
+        $person->setResearchGate($data['researchGate']);
+        $person->setScholar($data['scholar']);
+        $person->setPhone($data['phone']);
 
         $this->objectManager->persist($person);
         $this->objectManager->flush();
