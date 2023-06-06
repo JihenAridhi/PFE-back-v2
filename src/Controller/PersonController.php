@@ -95,7 +95,7 @@ class PersonController extends AbstractController
         $this->objectManager->persist($person);
         $this->objectManager->flush();
 
-        return$this->json($person);
+        return$this->json($person->getId());
     }
 
     #[Route('/person/update')]

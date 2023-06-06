@@ -89,7 +89,7 @@ class AutorisationController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $auto = $this->repo->find($id);
-        $auto->setFirstName($data['autorisation']);
+        $auto->setAutorisation($data['autorisation']);
 
 
         $this->objectManager->persist($auto);

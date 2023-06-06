@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme
@@ -35,5 +36,22 @@ class Theme
         $this->title = $title;
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getPerson(): Collection
+    {
+        return $this->person;
+    }
+
+    /**
+     * @param Collection $person
+     */
+    public function setPerson(Collection $person): void
+    {
+        $this->person = $person;
     }
 }
