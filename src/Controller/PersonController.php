@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Person;
+use App\Entity\Theme;
 use App\Repository\PersonRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -117,6 +118,7 @@ class PersonController extends AbstractController
         $person->setResearchGate($data['researchGate']);
         $person->setScholar($data['scholar']);
         $person->setPhone($data['phone']);
+        $this->setThemes($data['themes'], $person);
 
         $this->objectManager->persist($person);
         $this->objectManager->flush();
@@ -177,5 +179,26 @@ class PersonController extends AbstractController
 
             $this->mailer->send($email);
             return $this->json("sent");
+    }
+
+    public function setThemes(array $themes, Person $person): Response
+    {
+        foreach ($person->getThemes() as $theme)
+        {
+            $theme->getPerson()->removeElement($person);
+            $person->getThemes()->removeElement($theme);
+            $this->objectManager->persist($theme);
+        }
+
+        foreach ($themes as $theme)
+        {
+            $theme = $this->objectManager->getRepository(Theme::class)->find($theme['id']);
+            $theme->getPerson()->add($person);
+            $person->getThemes()->add($theme);
+            $this->objectManager->persist($theme);
+        }
+        $this->objectManager->persist($person);
+        $this->objectManager->flush();
+        return $this->json($person);
     }
 }

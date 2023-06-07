@@ -40,17 +40,6 @@ class ArticleController extends AbstractController
     #[Route('/article/get/{id}')]
     public function get(int $id): Response
     {
-        //return $this->json($this->repo->find($id));
-        /*return $this->json($this->repo->createQueryBuilder('a')
-        ->select( 'a', 'ap.author')
-        ->leftJoin('a.articleAuthor', 'ap')
-        ->leftJoin('ap.author', 'authors')
-        ->where('a.id=:id')
-        ->setParameter('id', $id)
-        ->orderBy('ap.id')
-        ->getQuery()
-        ->getResult());*/
-
         $article = $this->repo->find($id);
         $article->setAuthors();
         return $this->json($article);
@@ -170,26 +159,6 @@ class ArticleController extends AbstractController
         $this->objectManager->flush();
         return $this->json($article);
     }
-
-    /*public function setAuthors(Article $article, array $authors): Response
-{
-
-    foreach ($article->getAuthors() as $author) {
-        if (!in_array($author->getId(), $authors)) {
-            $article->getAuthors()->removeElement($author);
-            $author->getArticle()->removeElement($article);
-        }
-    }
-    for ($i = 0; $i < count($authors); $i++) {
-        $author = $this->managerRegistry->getRepository(Person::class)->find($authors[$i]);
-        if (!$article->getAuthors()->contains($author)) {
-            $author->getArticle()->add($article);
-            $this->objectManager->persist($author);
-        }
-    }
-    $this->objectManager->flush();
-    return $this->json($article);
-}*/
 
     #[Route('article/file')]
     public function upload(Request $request): Response
