@@ -65,4 +65,18 @@ class EventRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getEventCountByYear(int $year): int
+    {
+        $startDate = new \DateTime($year . '-01-01');
+        $endDate = new \DateTime($year . '-12-31');
+
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->where('a.date >= :startDate')
+            ->andWhere('a.date <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

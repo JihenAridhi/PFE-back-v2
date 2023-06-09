@@ -65,4 +65,18 @@ class ArticleRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getArticleCountByYear(int $year): int
+    {
+        $startDate = new \DateTime($year);
+        $endDate = new \DateTime($year);
+
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->where('a.year >= :startDate')
+            ->andWhere('a.year <= :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
