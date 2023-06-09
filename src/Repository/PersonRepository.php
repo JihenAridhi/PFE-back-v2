@@ -53,7 +53,13 @@ class PersonRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-
+    public function getPersonCount(): int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
 
 }
