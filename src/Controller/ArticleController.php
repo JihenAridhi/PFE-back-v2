@@ -145,7 +145,7 @@ class ArticleController extends AbstractController
         for ($i=0; $i<count($authors); $i++)
         {
             if(!$authors[$i]['id']) {
-                $author = new Person($authors[$i]['firstName'], $authors[$i]['lastName'], '', '');
+                $author = new Person($authors[$i]['fullName'], '', '');
                 $author->setCoAuthor(true);
                 $this->objectManager->persist($author);
             }

@@ -81,7 +81,7 @@ class EventController extends AbstractController
     #[Route('photo/event')]
     public function upload(Request $request): Response
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 
@@ -94,7 +94,7 @@ class EventController extends AbstractController
     //#[Route('photo/event/get/{id}')]
     public function getPhoto(int $id): string
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return "assets\\eventPhoto\\".$id.'.jpg';

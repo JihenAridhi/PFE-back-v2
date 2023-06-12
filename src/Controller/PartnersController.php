@@ -80,7 +80,7 @@ class PartnersController extends AbstractController
     #[Route('photo/partner')]
     public function upload(Request $request): Response
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 
@@ -93,7 +93,7 @@ class PartnersController extends AbstractController
     //#[Route('photo/partner/get/{id}')]
     public function getPhoto(int $id): string
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $path = $server."assets\partnerPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return "assets/partnerPhoto/".$id.'.jpg';

@@ -85,7 +85,7 @@ class NewsController extends AbstractController
     #[Route('photo/news')]
     public function upload(Request $request): Response
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 
@@ -98,7 +98,7 @@ class NewsController extends AbstractController
     //#[Route('photo/news/get/{id}')]
     public function getPhoto(int $id)
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $path = $server."assets\\newsPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return "assets\\newsPhoto\\".$id.'.jpg';

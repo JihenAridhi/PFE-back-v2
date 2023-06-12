@@ -66,6 +66,20 @@ class PersonController extends AbstractController
         return $this->json($person);
     }
 
+    #[Route('/person/login')]
+    public function login(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $person = $this->repo->findOneBy(['email'=>$data['email']]);
+        if ($person){
+            $person->setPhoto($this->getPhoto($person->getId()));
+            if (password_verify($data['password'], $person->getPassword()))
+                $person->setPassword($data['password']);
+            return $this->json($person);
+        }
+        return $this->json(null);
+    }
+
     #[Route('/person/getEmail/{email}')]
     public function getEmail(string $email): Response
     {
@@ -79,12 +93,11 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/add')]
-    public function add(Request $request/*, UserPasswordEncoderInterface $passwordEncoder*/): Response
+    public function add(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = new Person($data['firstName'], $data['lastName'], $data['email'], password_hash($data['password'],PASSWORD_DEFAULT));
-        //$person->setPassword($passwordEncoder->encodePassword($person, $data['password']));
+        $person = new Person($data['fullName'], $data['email'], password_hash($data['password'],PASSWORD_DEFAULT));
 
         $person->setBio($data['bio']);
         $person->setDblp($data['dblp']);
@@ -107,10 +120,9 @@ class PersonController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $person = $this->repo->find($data['id']);
-        $person->setFirstName($data['firstName']);
-        $person->setLastName($data['lastName']);
+        $person->setFullName($data['fullName']);
         $person->setEmail($data['email']);
-        $person->setPassword($data['password']);
+        $person->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
         $person->setBio($data['bio']);
         $person->setDblp($data['dblp']);
         $person->setOrcid($data['orcid']);
@@ -147,7 +159,7 @@ class PersonController extends AbstractController
     #[Route('photo/user')]
     public function upload(Request $request): Response
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 
@@ -160,7 +172,7 @@ class PersonController extends AbstractController
     #[Route('photo/user/get/{id}')]
     public function getPhoto(int $id)
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $path = $server."assets\userPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return /*$this->json(*/"assets/userPhoto/".$id.'.jpg'/*)*/;
@@ -205,7 +217,7 @@ class PersonController extends AbstractController
     #[Route('cv')]
     public function uploadCV(Request $request): Response
     {
-        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 

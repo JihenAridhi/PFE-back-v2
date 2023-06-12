@@ -19,10 +19,7 @@ class Person
     private ?int $id;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstName;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastName;
+    private ?string $fullName;
 
     #[ORM\Column(length: 255, unique: true)]
     private ?string $email;
@@ -78,10 +75,9 @@ class Person
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $dblp = null;
 
-    public function __construct(?string $firstName, ?string $lastName, ?string $email, ?string $password)
+    public function __construct(?string $fullName, ?string $email, ?string $password)
     {
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+        $this->fullName = $fullName;
         $this->email = $email;
         $this->password = $password;
         $this->profession = null;
@@ -105,38 +101,6 @@ class Person
     public function setId(?int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @param string|null $firstName
-     */
-    public function setFirstName(?string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getlastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param string|null $lastName
-     */
-    public function setlastName(?string $lastName): void
-    {
-        $this->lastName = $lastName;
     }
 
     /**
@@ -397,6 +361,22 @@ class Person
         $this->dblp = $dblp;
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
+    }
+
+    /**
+     * @param string|null $fullName
+     */
+    public function setFullName(?string $fullName): void
+    {
+        $this->fullName = $fullName;
     }
 
 }
