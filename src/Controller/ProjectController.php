@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Event;
-use App\Repository\EventRepository;
+use App\Entity\Project;
+use App\Repository\ProjectRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,65 +12,70 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EventController extends AbstractController
+class ProjectController extends AbstractController
 {
     private ManagerRegistry $managerRegistry;
-    private EventRepository $repo;
+    private ProjectRepository $repo;
     private ObjectManager $objectManager;
 
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
-        $this->repo = $this->managerRegistry->getRepository(Event::class);
+        $this->repo = $this->managerRegistry->getRepository(Project::class);
         $this->objectManager = $this->managerRegistry->getManager();
     }
-    #[Route('/event/getAll')]
+
+    #[Route('/project/getAll')]
     public function getAll(): Response
     {
-        $eventList = $this->repo->findAll();
-        foreach ($eventList as $event)
-            $event->setPhoto($this->getPhoto($event->getId()));
-        return $this->json($eventList);
+        $projectList = $this->repo->findAll();
+        foreach ($projectList as $project)
+            $project->setPhoto($this->getPhoto($project->getId()));
+        return $this->json($projectList);
     }
 
-    #[Route('/event/get/{id}')]
+    #[Route('/project/get/{id}')]
     public function get(int $id): Response
     {
-        $event = $this->repo->find($id);
-        $event->setPhoto($this->getPhoto($id));
-        return $this->json($event);
+        $project = $this->repo->find($id);
+        $project->setPhoto($this->getPhoto($id));
+        return $this->json($project);
     }
 
-    #[Route('/event/add')]
+    #[Route('/project/add')]
     public function add(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $event = new Event($data['title'], $data['date'], $data['location'], $data['organiser'], $data['description']);
+        $project = new project();
+        $project->setTitle($data['title']);
+        $project->setDescription($data['description']);
 
-        $this->objectManager->persist($event);
-
+        $this->objectManager->persist($project);
         $this->objectManager->flush();
 
-        return $this->json($event->getId());
+        return $this->json($project);
     }
 
-    #[Route('/event/update')]
+    #[Route('/project/update')]
     public function update(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $event = $this->repo->find($data['id']);
-        $event->setTitle($data['title']);
-        $event->setDate($data['date']);
-        $event->setLocation($data['location']);
-        $event->setDescription($data['description']);
-        $event->setOrganiser($data['organiser']);
+        $project = $this->repo->find($data['id']);
 
-        return $this->json($event);
+        $project->setTitle($data['title']);
+        //$project->setDate($data['date']);
+        $project->setDescription($data['description']);
+        //$project->setPhoto($data['photo']);
+
+        $this->objectManager->persist($project);
+        $this->objectManager->flush();
+
+        return $this->json($project);
     }
 
-    #[Route('/event/delete/{id}')]
+    #[Route('/project/delete/{id}')]
     public function delete(int $id): Response
     {
         $this->repo->remove($this->repo->find($id));
@@ -78,28 +83,25 @@ class EventController extends AbstractController
         return $this->json('success !!');
     }
 
-    #[Route('photo/event')]
+    #[Route('photo/project')]
     public function upload(Request $request): Response
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
         $file = $request->files->get('file');
         $fileName = $file->getClientOriginalName();
 
-        try {$file->move($server.'assets\eventPhoto\\', $fileName);}
+        try {$file->move($server.'assets\projectPhoto\\', $fileName);}
         catch (FileException $e) {}
 
         return $this->json('');
     }
 
-    //#[Route('photo/event/get/{id}')]
-    public function getPhoto(int $id): string
+    public function getPhoto(int $id)
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
-        $path = $server."assets\\eventPhoto\\";
+        $path = $server."assets\\projectPhoto\\";
         if (file_exists($path.$id.'.jpg'))
-            return "assets\\eventPhoto\\".$id.'.jpg';
-        return 'assets\\eventPhoto\\default.jpg';
+            return "assets\\projectPhoto\\".$id.'.jpg';
+        return "assets\\projectPhoto\\".'default.jpg';
     }
-
-
 }

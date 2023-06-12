@@ -15,9 +15,7 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
-
-
-
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class PersonController extends AbstractController
 {
@@ -81,11 +79,12 @@ class PersonController extends AbstractController
     }
 
     #[Route('/person/add')]
-    public function add(Request $request): Response
+    public function add(Request $request/*, UserPasswordEncoderInterface $passwordEncoder*/): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = new Person($data['firstName'], $data['lastName'], $data['email'], $data['password']);
+        $person = new Person($data['firstName'], $data['lastName'], $data['email'], password_hash($data['password'],PASSWORD_DEFAULT));
+        //$person->setPassword($passwordEncoder->encodePassword($person, $data['password']));
 
         $person->setBio($data['bio']);
         $person->setDblp($data['dblp']);
@@ -112,8 +111,6 @@ class PersonController extends AbstractController
         $person->setLastName($data['lastName']);
         $person->setEmail($data['email']);
         $person->setPassword($data['password']);
-        $person->setProfession($data['profession']);
-        $person->setTeam($data['team']);
         $person->setBio($data['bio']);
         $person->setDblp($data['dblp']);
         $person->setOrcid($data['orcid']);
@@ -203,5 +200,18 @@ class PersonController extends AbstractController
         $this->objectManager->persist($person);
         $this->objectManager->flush();
         return $this->json($person);
+    }
+
+    #[Route('cv')]
+    public function uploadCV(Request $request): Response
+    {
+        $server = 'C:\Users\ARIDHI\Desktop\PFE\PFE-front\src\\';
+        $file = $request->files->get('file');
+        $fileName = $file->getClientOriginalName();
+
+        try {$file->move($server.'assets\CV\\', $fileName);}
+        catch (FileException $e) {}
+
+        return $this->json('assets\CV\\'.$fileName);
     }
 }
