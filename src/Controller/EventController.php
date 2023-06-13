@@ -78,20 +78,27 @@ class EventController extends AbstractController
         return $this->json('success !!');
     }
 
-    #[Route('photo/event')]
-    public function upload(Request $request): Response
+    #[Route('photo/event/{id}')]
+    public function upload(Request $request, int $id): Response
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
-        $file = $request->files->get('file');
-        $fileName = $file->getClientOriginalName();
+        $folder = $server . 'assets\eventPhoto\\' . $id;
 
-        try {$file->move($server.'assets\eventPhoto\\', $fileName);}
-        catch (FileException $e) {}
+        if (!file_exists($folder)) {
+            mkdir($folder, 0777, true);
+        }
+
+        $files = $request->files->get('files');
+
+        foreach ($files as $file) {
+            $fileName = $file->getClientOriginalName();
+            try {$file->move($folder, $fileName);}
+            catch (FileException $e) {}
+        }
 
         return $this->json('');
     }
 
-    //#[Route('photo/event/get/{id}')]
     public function getPhoto(int $id): string
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
@@ -100,6 +107,4 @@ class EventController extends AbstractController
             return "assets\\eventPhoto\\".$id.'.jpg';
         return 'assets\\eventPhoto\\default.jpg';
     }
-
-
 }

@@ -53,7 +53,7 @@ class NewsController extends AbstractController
         $this->objectManager->persist($news);
         $this->objectManager->flush();
 
-        return $this->json($news);
+        return $this->json($news->getId());
     }
 
     #[Route('/news/update')]
