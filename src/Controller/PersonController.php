@@ -40,6 +40,18 @@ class PersonController extends AbstractController
             $person->setPhoto($this->getPhoto($person->getId()));
         return $this->json($personList);
     }
+    
+    #[Route('/person/getByFullName/{firstName}/{lastName}')]
+    public function getByFullName(string $firstName, string $lastName): Response
+    {
+        $person = $this->repo->findOneBy(['firstName' => $firstName, 'lastName' => $lastName]);
+        if ($person) {
+            $person->setPhoto($this->getPhoto($person->getId()));
+            return $this->json($person);
+        }
+
+        return $this->json(['error' => 'Person not found'], Response::HTTP_NOT_FOUND);
+    }
 
     #[Route('/person/getAll/status/{status}')]
     public function getAllByStatus(bool $status): Response
