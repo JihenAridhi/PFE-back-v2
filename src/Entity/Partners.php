@@ -2,14 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PartnersRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass : PartnersRepository::class)]
-//#[ApiResource]
-class Partners extends PartnersRepository
+class Partners
 {
 
     #[ORM\Id]

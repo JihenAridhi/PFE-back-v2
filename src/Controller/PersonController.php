@@ -44,7 +44,7 @@ class PersonController extends AbstractController
     #[Route('/person/getByFullName/{firstName}/{lastName}')]
     public function getByFullName(string $firstName, string $lastName): Response
     {
-        $person = $this->repo->findOneBy(['firstName' => $firstName, 'lastName' => $lastName]);
+        $person = $this->repo->findOneBy(['fullName' => ($firstName.' '.$lastName)]);
         if ($person) {
             $person->setPhoto($this->getPhoto($person->getId()));
             return $this->json($person);
@@ -56,7 +56,7 @@ class PersonController extends AbstractController
     #[Route('/person/getAll/status/{status}')]
     public function getAllByStatus(bool $status): Response
     {
-        $personList = $this->repo->findBy(['status'=>$status]);
+        $personList = $this->repo->findBy(['status'=>$status, 'coAuthor'=>false]);
         foreach ($personList as $person)
             $person->setPhoto($this->getPhoto($person->getId()));
         return $this->json($personList);

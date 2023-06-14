@@ -48,7 +48,7 @@ class PartnersController extends AbstractController
 
         $this->objectManager->flush();
 
-        return $this->json('success');
+        return $this->json($partner->getId());
     }
 
     #[Route('/partner/update')]
