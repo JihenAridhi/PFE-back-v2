@@ -72,7 +72,7 @@ class PartnersController extends AbstractController
     #[Route('/partner/delete/{id}')]
     public function delete(int $id): Response
     {
-        $this->repo->remove($id);
+        $this->objectManager->remove($this->repo->find($id));
         $this->objectManager->flush();
         return $this->json('success !!');
     }

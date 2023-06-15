@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Repository\EventRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +30,7 @@ class EventController extends AbstractController
     {
         $eventList = $this->repo->findAll();
         foreach ($eventList as $event)
-            $event->setPhoto($this->getPhoto($event->getId()));
+            $event->setPhotos($this->getPhotos($event->getId()));
         return $this->json($eventList);
     }
 
@@ -37,7 +38,7 @@ class EventController extends AbstractController
     public function get(int $id): Response
     {
         $event = $this->repo->find($id);
-        $event->setPhoto($this->getPhoto($id));
+        $event->setPhotos($this->getPhotos($id));
         return $this->json($event);
     }
 
@@ -99,12 +100,31 @@ class EventController extends AbstractController
         return $this->json('');
     }
 
-    public function getPhoto(int $id): string
+    /*public function getPhoto(int $id): string
     {
         $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
         $path = $server."assets\\eventPhoto\\";
         if (file_exists($path.$id.'.jpg'))
             return "assets\\eventPhoto\\".$id.'.jpg';
         return 'assets\\eventPhoto\\default.jpg';
+    }*/
+
+    public function getPhotos(int $id): array
+    {
+        $server = 'C:\Users\ARIDHI\Desktop\PFE - Copy\PFE-front\src\\';
+        $folder = $server . 'assets\eventPhoto\\' . $id;
+
+        $photos = [];
+
+        if (file_exists($folder) && is_dir($folder)) {
+            $files = scandir($folder);
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    $photos[] = 'assets/eventPhoto/'.$id.'/'.$file;
+                }
+            }
+        }
+
+        return $photos;
     }
 }

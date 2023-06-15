@@ -33,7 +33,7 @@ class Event extends EventRepository
     private ?string $description ;
 
     #[ORM\Transient]
-    private ?string $photo;
+    private ?array $photos;
 
     /**
      * @param string|null $title
@@ -116,18 +116,19 @@ class Event extends EventRepository
     }
 
     /**
-     * @param string|null $photo
+     * @return array|null
      */
-    public function setPhoto(?string $photo): void
+    public function getPhotos(): ?array
     {
-        $this->photo = $photo;
+        return $this->photos;
     }
 
     /**
-     * @return string|null
+     * @param array|null $photos
      */
-    public function getPhoto(): ?string
+    public function setPhotos(?array $photos): void
     {
-        return $this->photo;
+        $this->photos = $photos;
     }
+
 }
