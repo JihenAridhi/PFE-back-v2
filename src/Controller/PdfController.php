@@ -12,6 +12,8 @@ use App\Repository\EventRepository;
 use App\Repository\NewsRepository;
 use App\Repository\PartnersRepository;
 use App\Repository\PersonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +33,8 @@ class PdfController extends AbstractController
     private PersonRepository $repoperson;
     private ObjectManager $objectManager;
 
+
+
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
@@ -40,6 +44,8 @@ class PdfController extends AbstractController
         $this->repopartners = $this->managerRegistry->getRepository(Partners::class);
         $this->repoperson = $this->managerRegistry->getRepository(Person::class);
         $this->objectManager = $this->managerRegistry->getManager();
+
+
     }
 
     /**
@@ -68,29 +74,50 @@ class PdfController extends AbstractController
 
         // Generate the HTML content
         $html = '<h1 align="center">Reporting for SMARTLAB</h1>';
-        $html .= '<p style="margin-top: 40px;" >This is a report to get some informations about smart laboratory</p>';
+        $html .= '<p style="margin-top: 40px;" >This is a report to get some informations about smart laboratory for '. $year .'</p>';
         if($articlesChecked){
+            $articles = $this->repoarticle->findAll();
             $articleCount = $this->repoarticle->getArticleCountByYear($year);
-            $html .= '<div style="width: 70px; height: 100px; background-color: #EEEEEE; margin-top:40px; border-radius: 50px;"><p style="margin-top: 20px; width: 40px; height: auto;">Number of articles in ' . $year .' : ' . $articleCount . '</p></div>';
-        }
-        if($eventsChecked){
-            $eventCount = $this->repoevent->getEventCountByYear($year);
-            $html .= '<div style="width: 70px; height: 100px; background-color: #EEEEEE; margin-top:80px; border-radius: 50px;"><p style="margin-top: 20px; width: 40px; height: auto;">Number of events in ' . $year .' : ' . $eventCount . '</p></div>';
-        }
-        if($newsChecked){
-            $newsCount = $this->reponews->getNewsCountByYear($year);
-            $html .= '<div style="width: 70px; height: 100px; background-color: #EEEEEE; margin-top:80px; border-radius: 50px;"><p style="margin-top: 20px; width: 40px; height: auto;">Number of news in ' . $year .' : ' . $newsCount . '</p></div>';
-        }
-        if($partnersChecked){
-            $partnersCount = $this->repopartners->getPartnersCount();
-            $html .= '<div style="width: 70px; height: 100px; background-color: #EEEEEE; margin-top:80px; border-radius: 50px;"><p style="margin-top: 20px; width: 40px; height: auto;">Number of partners : ' . $partnersCount . '</p></div>';
+            $html .= '<div style="width: 70px; height: 50px; background-color: #ffffff; margin-top:40px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto;color: darkblue">Number of articles : ' . $articleCount . '</h3></div>';
+            $html .= '<hr>';
+
+            foreach ($articles as $article) {
+                if ($article->getYear() == $year) {
+                    $html .= '<hr>';
+                    $html .= '<div >';
+                    $html .= '<p><span style="color: dodgerblue;">Title</span> : '. $article->getTitle() . '<br><span style="color: dodgerblue;">Type</span> : '. $article->getType() .'<br><span style="color: dodgerblue;">Name of '. $article->getType() .' </span>: '. $article->getName() .'<br><span style="color: dodgerblue;">Description</span> : '. $article->getDescription() . '</p>';
+                    $html .= '</div>';
+                    $html .= '<hr>';
+                }
+            }
+            $html .= '<hr>';
+
         }
         if($membersChecked){
             $personCount = $this->repoperson->getPersonCount();
-            $html .= '<div style="width: 70px; height: 100px; background-color: #EEEEEE; margin-top:80px; border-radius: 50px;"><p style="margin-top: 20px; width: 40px; height: auto;">Number of members : ' . $personCount . '</p></div>';
+            $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of members : ' . $personCount . '</h3></div>';
+            $members = $this->repoperson->findAll();
+            $html .='<table> <tr><th style="color: dodgerblue">First Name</th> <th style="color: dodgerblue">Last Name</th></tr>';
+            foreach ($members as $member) {
+                $html .= '<tr>';
+                $html .= '<td> '. $member->getFirstName() . '</td><td> '. $member->getlastName() . '</td>';
+                $html .= '<</tr>>';
+            }
+
+
         }
-
-
+        if($eventsChecked){
+            $eventCount = $this->repoevent->getEventCountByYear($year);
+            $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of events in ' . $year .' : ' . $eventCount . '</h3></div>';
+        }
+        if($newsChecked){
+            $newsCount = $this->reponews->getNewsCountByYear($year);
+            $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of news in ' . $year .' : ' . $newsCount . '</h3></div>';
+        }
+        if($partnersChecked){
+            $partnersCount = $this->repopartners->getPartnersCount();
+            $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of partners : ' . $partnersCount . '</h3></div>';
+        }
         // Output the HTML as a PDF
         $pdf->writeHTML($html, true, false, true, false, '');
 
