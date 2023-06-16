@@ -31,6 +31,7 @@ class ProjectController extends AbstractController
         $projectList = $this->repo->findAll();
         foreach ($projectList as $project)
             $project->setPhoto($this->getPhoto($project->getId()));
+            $project->setPartners();
         return $this->json($projectList);
     }
 
@@ -38,8 +39,22 @@ class ProjectController extends AbstractController
     public function get(int $id): Response
     {
         $project = $this->repo->find($id);
+        $project->setPartners();
         $project->setPhoto($this->getPhoto($id));
         return $this->json($project);
+    }
+    #[Route('/project/getAll/{id}')]
+    public function getPartnerProjects(int $id): Response
+    {
+        $projects = $this->repo->createQueryBuilder('a')
+            ->leftJoin('a.projectPartner', 'p')
+            ->andWhere('p.partner=:id')
+            ->setParameter(':id', $id)
+            ->getQuery()
+            ->getResult();
+        foreach ($projects as $project)
+            $project->setPartners();
+        return $this->json($projects);
     }
 
     #[Route('/project/add')]
@@ -50,9 +65,11 @@ class ProjectController extends AbstractController
         $project = new project();
         $project->setTitle($data['title']);
         $project->setDescription($data['description']);
+        $project->setType($data['type']);
 
         $this->objectManager->persist($project);
         $this->objectManager->flush();
+        $this->setPartners($project, $data['partner']);
 
         return $this->json($project);
     }
@@ -67,10 +84,12 @@ class ProjectController extends AbstractController
         $project->setTitle($data['title']);
         //$project->setDate($data['date']);
         $project->setDescription($data['description']);
+        $project->setType($data['type']);
         //$project->setPhoto($data['photo']);
 
         $this->objectManager->persist($project);
         $this->objectManager->flush();
+        $this->setPartners($project, $data['partners']);
 
         return $this->json($project);
     }
@@ -103,5 +122,37 @@ class ProjectController extends AbstractController
         if (file_exists($path.$id.'.jpg'))
             return "assets\\projectPhoto\\".$id.'.jpg';
         return "assets\\projectPhoto\\".'default.jpg';
+    }
+    #[Route('/project/{id}/getPartners')]
+    public function getPartners(int $id): Response
+    {
+        $project = $this->repo->find($id);
+        return $this->json($project->getPartners());
+    }
+    public function setPartners(Project $project, array $partners): Response
+    {
+        foreach ($project->getProjectPartner() as $association) {
+            $partner = $association->getPartner();
+            $partner->getProjectPartner()->removeElement($association);
+            $project->getProjectPartner()->removeElement($association);
+            $this->objectManager->remove($association);
+        }
+
+        for ($i=0; $i<count($partners); $i++)
+        {
+            if(!$partners[$i]['id']) {
+                $partner = new Partners($partners[$i]['Name'], '', '');
+                $partner->setCoPartner(true);
+                $this->objectManager->persist($partner);
+            }
+            else
+                $partner = $this->managerRegistry->getRepository(Partners::class)->find($partners[$i]['id']);
+
+            $association = new ProjectPartners($project, $partner);
+            $this->objectManager->persist($association);
+        }
+
+        $this->objectManager->flush();
+        return $this->json($project);
     }
 }
