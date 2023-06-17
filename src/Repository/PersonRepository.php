@@ -57,6 +57,7 @@ class PersonRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->select('COUNT(a)')
+            ->andWhere('a.status=true')
             ->getQuery()
             ->getSingleScalarResult();
     }

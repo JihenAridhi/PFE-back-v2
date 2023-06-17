@@ -96,11 +96,11 @@ class PdfController extends AbstractController
         if($membersChecked){
             $personCount = $this->repoperson->getPersonCount();
             $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of members : ' . $personCount . '</h3></div>';
-            $members = $this->repoperson->findAll();
-            $html .='<table> <tr><th style="color: dodgerblue">First Name</th> <th style="color: dodgerblue">Last Name</th></tr>';
+            $members = $this->repoperson->findBy(['status'=>true]);
+            $html .='<table> <tr><th style="color: dodgerblue">Full Name</th></tr>';
             foreach ($members as $member) {
                 $html .= '<tr>';
-                $html .= '<td> '. $member->getFirstName() . '</td><td> '. $member->getlastName() . '</td>';
+                $html .= '<td> '. $member->getFullName() . '</td>';
                 $html .= '<</tr>>';
             }
 
