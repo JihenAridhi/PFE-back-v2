@@ -7,11 +7,13 @@ use App\Entity\Event;
 use App\Entity\News;
 use App\Entity\Partners;
 use App\Entity\Person;
+use App\Entity\Project;
 use App\Repository\ArticleRepository;
 use App\Repository\EventRepository;
 use App\Repository\NewsRepository;
 use App\Repository\PartnersRepository;
 use App\Repository\PersonRepository;
+use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -31,6 +33,7 @@ class PdfController extends AbstractController
     private NewsRepository $reponews;
     private PartnersRepository $repopartners;
     private PersonRepository $repoperson;
+    private ProjectRepository $repoproject;
     private ObjectManager $objectManager;
 
 
@@ -43,6 +46,7 @@ class PdfController extends AbstractController
         $this->reponews = $this->managerRegistry->getRepository(News::class);
         $this->repopartners = $this->managerRegistry->getRepository(Partners::class);
         $this->repoperson = $this->managerRegistry->getRepository(Person::class);
+        $this->repoproject = $this->managerRegistry->getRepository(Project::class);
         $this->objectManager = $this->managerRegistry->getManager();
 
 
@@ -96,11 +100,11 @@ class PdfController extends AbstractController
         if($membersChecked){
             $personCount = $this->repoperson->getPersonCount();
             $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of members : ' . $personCount . '</h3></div>';
-            $members = $this->repoperson->findBy(['status'=>true]);
-            $html .='<table> <tr><th style="color: dodgerblue">Full Name</th></tr>';
+            $members = $this->repoperson->findAll();
+            $html .='<table> <tr><th style="color: dodgerblue">First Name</th> <th style="color: dodgerblue">Last Name</th></tr>';
             foreach ($members as $member) {
                 $html .= '<tr>';
-                $html .= '<td> '. $member->getFullName() . '</td>';
+                $html .= '<td> '. $member->getFirstName() . '</td><td> '. $member->getlastName() . '</td>';
                 $html .= '<</tr>>';
             }
 
@@ -109,6 +113,10 @@ class PdfController extends AbstractController
         if($eventsChecked){
             $eventCount = $this->repoevent->getEventCountByYear($year);
             $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of events in ' . $year .' : ' . $eventCount . '</h3></div>';
+        }
+        if($projectsChecked){
+            $projectCount = $this->repoproject->getProjectCountByYear($year);
+            $html .= '<div style="width: 70px; height: 100px; background-color: #ffffff; margin-top:80px; border-radius: 50px;"><h3 style="margin-top: 20px; width: 40px; height: auto; color: darkblue">Number of events in ' . $year .' : ' . $projectCount . '</h3></div>';
         }
         if($newsChecked){
             $newsCount = $this->reponews->getNewsCountByYear($year);
