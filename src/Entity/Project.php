@@ -20,6 +20,9 @@ class Project
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTime $date ;
+
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
@@ -35,12 +38,14 @@ class Project
 
     /**
      * @param string|null $title
+     * @param DateTime|null $date
      * @param string|null $description
      * @param string|null $type
      */
-    public function __construct(?string $title, ?string $description, ?string $type)
+    public function __construct(?string $title, ?string $date, ?string $description, ?string $type)
     {
         $this->title = $title;
+        $this->date = new DateTime($date);
         $this->description = $description;
         $this->type= $type;
     }
@@ -60,6 +65,21 @@ class Project
         $this->title = $title;
 
         return $this;
+    }
+    /**
+     * @return DateTime|null
+     */
+    public function getDate(): ?DateTime
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param DateTime|null $date
+     */
+    public function setDate(?string $date): void
+    {
+        $this->date = new DateTime($date);
     }
     /**
      * @return string|null

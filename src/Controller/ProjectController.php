@@ -64,6 +64,7 @@ class ProjectController extends AbstractController
 
         $project = new project();
         $project->setTitle($data['title']);
+        $project->setTitle($data['date']);
         $project->setDescription($data['description']);
         $project->setType($data['type']);
 
