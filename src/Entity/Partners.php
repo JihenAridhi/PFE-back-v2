@@ -34,11 +34,6 @@ class Partners
     #[ORM\Transient]
     private ?string $photo;
 
-    #[ORM\Column]
-    private ?bool $coPartner;
-
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: ProjectPartners::class)]
-    private Collection $projectPartner;
     /**
      * @param string|null $name
      * @param string|null $type
@@ -51,23 +46,6 @@ class Partners
         $this->type = $type;
         $this->description = $description;
         $this->urlPage = $urlPage;
-        $this->projectPartner = new ArrayCollection();
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getCoPartner(): ?bool
-    {
-        return $this->coPartner;
-    }
-
-    /**
-     * @param bool|null $coPartner
-     */
-    public function setCoPartner(?bool $coPartner): void
-    {
-        $this->coPartner = $coPartner;
     }
 
     /**
@@ -165,37 +143,5 @@ class Partners
     {
         $this->photo = $photo;
     }
-
-    /**
-     * @return Collection<int, ProjectPartners>
-     * @Ignore
-     */
-    public function getProjectPartner(): Collection
-    {
-        return $this->projectPartner;
-    }
-
-    public function addProjectPartner(ProjectPartners $projectPartner): self
-    {
-        if (!$this->projectPartner->contains($projectPartner)) {
-            $this->projectPartner->add($projectPartner);
-            $projectPartner->setPartner($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProjectPartner(ProjectPartners $projectPartner): self
-    {
-        if ($this->projectPartner->removeElement($projectPartner)) {
-            // set the owning side to null (unless already changed)
-            if ($projectPartner->getPartner() === $this) {
-                $projectPartner->setPartner(null);
-            }
-        }
-
-        return $this;
-    }
-
 
 }
