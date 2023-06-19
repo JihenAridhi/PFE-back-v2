@@ -34,7 +34,7 @@ class Partners
     #[ORM\Transient]
     private ?string $photo;
 
-    #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'partners')]
+    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'partners')]
     private Collection $projects;
 
     /**
