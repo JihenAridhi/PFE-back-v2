@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Partners;
 use App\Entity\Project;
 use App\Repository\ProjectRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -31,7 +32,6 @@ class ProjectController extends AbstractController
         $projectList = $this->repo->findAll();
         foreach ($projectList as $project)
             $project->setPhoto($this->getPhoto($project->getId()));
-            $project->setPartners();
         return $this->json($projectList);
     }
 
@@ -39,7 +39,6 @@ class ProjectController extends AbstractController
     public function get(int $id): Response
     {
         $project = $this->repo->find($id);
-        $project->setPartners();
         $project->setPhoto($this->getPhoto($id));
         return $this->json($project);
     }
@@ -62,15 +61,11 @@ class ProjectController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $project = new project();
-        $project->setTitle($data['title']);
-        $project->setTitle($data['date']);
-        $project->setDescription($data['description']);
-        $project->setType($data['type']);
+        $project = new Project($data['title'], $data['date'], $data['description'], $data['type']);
 
         $this->objectManager->persist($project);
         $this->objectManager->flush();
-        $this->setPartners($project, $data['partner']);
+        $this->setPartners($data['partners'], $project);
 
         return $this->json($project);
     }
@@ -83,10 +78,9 @@ class ProjectController extends AbstractController
         $project = $this->repo->find($data['id']);
 
         $project->setTitle($data['title']);
-        //$project->setDate($data['date']);
+        $project->setDate($data['date']);
         $project->setDescription($data['description']);
         $project->setType($data['type']);
-        //$project->setPhoto($data['photo']);
 
         $this->objectManager->persist($project);
         $this->objectManager->flush();
@@ -143,7 +137,7 @@ class ProjectController extends AbstractController
         {
             $partner = $this->objectManager->getRepository(Partners::class)->find($partner['id']);
             $partner->getProjects()->add($project);
-                $project->getPartners()->add($partner);
+            $project->getPartners()->add($partner);
             $this->objectManager->persist($partner);
         }
         $this->objectManager->persist($project);

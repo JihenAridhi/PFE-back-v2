@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProjectRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -48,6 +49,7 @@ class Project
         $this->date = new DateTime($date);
         $this->description = $description;
         $this->type= $type;
+        $this->setPartners(new ArrayCollection());
     }
 
     public function getId(): ?int
@@ -126,7 +128,6 @@ class Project
 
     /**
      * @return Collection
-     * @Ignore
      */
     public function getPartners(): Collection
     {
