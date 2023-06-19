@@ -38,6 +38,51 @@ class PartnersController extends AbstractController
     public function get(int $id): Response
     {return $this->json($this->repo->find($id));}
 
+    #[Route('/project/{id}/getPartners')]
+    public function getProjectPartners($id)
+    {
+        $query = $this->repo->createQueryBuilder('a')
+            ->select('a.id')
+            ->leftjoin('a.projects', 'p')
+            ->andWhere('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+        return $this->json($query);
+    }
+    #[Route('/project/{idP}/addPartner/{idT}')]
+    public function addPartners(int $idP, int $idT)
+    {
+        $partner = $this->repo->find($idT);
+        $project = $this->managerRegistry->getRepository(Project::class)->find($idP);
+
+        $project->getPartners()->add($partner);
+        $partner->getProjects()->add($project);
+
+        $this->objectManager->persist($project);
+        $this->objectManager->persist($partner);
+
+        $this->objectManager->flush();
+
+        return $this->json('sucess!!');
+    }
+    #[Route('/project/{idP}/deletePartner/{idT}')]
+    public function deletePartner(int $idP, int $idT)
+    {
+        $partner = $this->repo->find($idT);
+        $project = $this->managerRegistry->getRepository(Project::class)->find($idP);
+
+        $partner->getProjects()->removeElement($project);
+        $project->getPartners()->removeElement($partner);
+
+        $this->objectManager->persist($partner);
+        $this->objectManager->persist($project);
+
+        $this->objectManager->flush();
+
+        return $this->json('success');
+    }
+
     #[Route('/partner/add')]
     public function add(Request $request): Response
     {
