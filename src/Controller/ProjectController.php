@@ -130,29 +130,23 @@ class ProjectController extends AbstractController
         $project = $this->repo->find($id);
         return $this->json($project->getPartners());
     }
-    public function setPartners(Project $project, array $partners): Response
+    public function setPartners(array $partners, Project $project): Response
     {
-        foreach ($project->getProjectPartner() as $association) {
-            $partner = $association->getPartner();
-            $partner->getProjectPartner()->removeElement($association);
-            $project->getProjectPartner()->removeElement($association);
-            $this->objectManager->remove($association);
-        }
-
-        for ($i=0; $i<count($partners); $i++)
+        foreach ($project->getPartners() as $partner)
         {
-            if(!$partners[$i]['id']) {
-                $partner = new Partners($partners[$i]['Name'], '', '');
-                $partner->setCoPartner(true);
-                $this->objectManager->persist($partner);
-            }
-            else
-                $partner = $this->managerRegistry->getRepository(Partners::class)->find($partners[$i]['id']);
-
-            $association = new ProjectPartners($project, $partner);
-            $this->objectManager->persist($association);
+            $partner->getProjects()->removeElement($project);
+            $project->getPartners()->removeElement($partner);
+            $this->objectManager->persist($partner);
         }
 
+        foreach ($partners as $partner)
+        {
+            $partner = $this->objectManager->getRepository(Partners::class)->find($partner['id']);
+            $partner->getProjects()->add($project);
+                $project->getPartners()->add($partner);
+            $this->objectManager->persist($partner);
+        }
+        $this->objectManager->persist($project);
         $this->objectManager->flush();
         return $this->json($project);
     }
