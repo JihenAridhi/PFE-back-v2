@@ -34,6 +34,9 @@ class Partners
     #[ORM\Transient]
     private ?string $photo;
 
+    #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'partners')]
+    private Collection $projects;
+
     /**
      * @param string|null $name
      * @param string|null $type
@@ -143,5 +146,22 @@ class Partners
     {
         $this->photo = $photo;
     }
+    /**
+     * @return Collection
+     * @Ignore
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    /**
+     * @param Collection $projects
+     */
+    public function setProjects(Collection $projects): void
+    {
+        $this->projects = $projects;
+    }
+
 
 }
