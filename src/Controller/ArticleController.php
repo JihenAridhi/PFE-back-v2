@@ -121,7 +121,15 @@ class ArticleController extends AbstractController
     #[Route('/article/delete/{id}')]
     public function delete(int $id): Response
     {
-        $this->repo->remove($this->repo->find($id));
+        $article = $this->repo->find($id);
+        foreach ($article->getArticleAuthor() as $association) {
+            $author = $association->getAuthor();
+            $author->getArticleAuthor()->removeElement($association);
+            $article->getArticleAuthor()->removeElement($association);
+            $this->objectManager->remove($association);
+        }
+
+        $this->repo->remove($article);
         $this->objectManager->flush();
         return $this->json('success !!');
     }

@@ -163,7 +163,20 @@ class PersonController extends AbstractController
     #[Route('/person/delete/{id}')]
     public function delete(int $id): Response
     {
-        $this->objectManager->remove($this->repo->find($id));
+        $person = $this->repo->find($id);
+        foreach ($person->getArticleAuthor() as $association) {
+            $article = $association->getArticle();
+            $person->getArticleAuthor()->removeElement($association);
+            $article->getArticleAuthor()->removeElement($association);
+            $this->objectManager->remove($association);
+        }
+        foreach ($person->getThemes() as $theme)
+        {
+            $theme->getPerson()->removeElement($person);
+            $person->getThemes()->removeElement($theme);
+            $this->objectManager->persist($theme);
+        }
+        $this->objectManager->remove($person);
         $this->objectManager->flush();
         return $this->json('success!!');
     }
