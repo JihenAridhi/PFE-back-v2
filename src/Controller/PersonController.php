@@ -83,13 +83,15 @@ class PersonController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $person = $this->repo->findOneBy(['email'=>$data['email']]);
-        if ($person){
+        $person->setPhoto($this->getPhoto($person->getId()));
+        return $this->json($person);
+        /*if ($person){
             $person->setPhoto($this->getPhoto($person->getId()));
             if (password_verify($data['password'], $person->getPassword()))
                 $person->setPassword($data['password']);
             return $this->json($person);
         }
-        return $this->json(null);
+        return $this->json(null);*/
     }
 
     #[Route('/person/getEmail/{email}')]
@@ -109,7 +111,7 @@ class PersonController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $person = new Person($data['fullName'], $data['email'], password_hash($data['password'],PASSWORD_DEFAULT));
+        $person = new Person($data['fullName'], $data['email'], $data['password']/*password_hash($data['password'],PASSWORD_DEFAULT)*/);
 
         $person->setBio($data['bio']);
         $person->setDblp($data['dblp']);
@@ -142,6 +144,8 @@ class PersonController extends AbstractController
         $person->setResearchGate($data['researchGate']);
         $person->setScholar($data['scholar']);
         $person->setPhone($data['phone']);
+        $person->setProfession($data['profession']);
+        $person->setTeam($data['team']);
         $this->setThemes($data['themes'], $person);
 
         $this->objectManager->persist($person);
